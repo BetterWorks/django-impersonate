@@ -38,7 +38,40 @@ Use
 ---
 1) Add 'impersonate' to your INSTALLED_APPS
 
-2) 
+2) Add 'impersonate.middleware.ImpersonateMiddleware' to your MIDDLEWARE_CLASSES
+
+3) Add 'impersonate.urls' somewhere in your url structure. Example:
+
+urlpatterns = patterns('',
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^impersonate/', include('impersonate.urls')),
+
+    ... (all your other urls here) ...
+)
+
+You can now impersonate another user by hitting the following path:
+
+/impersonate/<user-id>/
+
+Replace <user-id> with the user id of the user you want to impersonate.
+
+While in impersonation "mode" the request.user object will have an 
+"_impersonate" attribute set to True. So if you wanted to check in your 
+templates or view, you just do something like...
+
+{% if user._impersonate %} .... {% endif %}
+
+You can reference this URL with reverse() or the {% url %} template tag 
+as 'impersonate-start'
+
+
+To remove the impersonation, hit the following path:
+
+/impersonate/stop/
+
+You can reference this URL with reverse() or the {% url %} template tag 
+as 'impersonate-stop'
+
 
 
 Copyright & Warranty
