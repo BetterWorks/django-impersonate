@@ -23,7 +23,6 @@ def impersonate(request, uid):
     return redirect(get_redir_path())
 
 
-@allowed_user_required
 def stop_impersonate(request):
     ''' Remove the impersonation object from the session
     '''
