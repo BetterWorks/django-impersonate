@@ -49,7 +49,10 @@ urlpatterns = patterns('',
     ... (all your other urls here) ...
 )
 
-You can now impersonate another user by hitting the following path:
+
+** HOW TO USE **
+
+== You can now impersonate another user by hitting the following path:
 
 /impersonate/<user-id>/
 
@@ -65,13 +68,51 @@ You can reference this URL with reverse() or the {% url %} template tag
 as 'impersonate-start'
 
 
-To remove the impersonation, hit the following path:
+== To remove the impersonation, hit the following path:
 
 /impersonate/stop/
 
 You can reference this URL with reverse() or the {% url %} template tag 
 as 'impersonate-stop'
 
+
+== To list all users you can go to:
+
+/impersonate/list/
+
+This will render the template 'impersonate/list_users.html' and will pass 
+the following in the context:
+
+* users - queryset of all users
+* paginator - Django Paginator instance
+* page - Current page of objects (from Paginator) 
+* page_number - Current page number, defaults to 1
+
+You can reference this URL with reverse() or the {% url %} template tag
+as 'impersonate-list'
+
+
+== To search all users you can go to:
+
+/impersonate/search/
+
+This will render the template 'impersonate/search_users.html' and will pass 
+the following in the context:
+
+* users - queryset of all users
+* paginator - Django Paginator instance
+* page - Current page of objects (from Paginator) 
+* page_number - Current page number, defaults to 1
+* query - The search query that was entered
+
+The view will expect a GET request and look for the 'q' variable being passed. 
+If present, it will search the user entries with the value of 'q'. The fields 
+searched are:
+
+User.username, User.first_name, User.last_name, User.email
+
+You can reference this URL with reverse() or the {% url %} template tag
+as 'impersonate-search'
 
 
 Copyright & Warranty
