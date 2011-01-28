@@ -8,4 +8,8 @@ urlpatterns = patterns('impersonate.views',
     url(r'^stop/$',
         'stop_impersonate',
         name='impersonate-stop'),
+    url(r'^list/$',
+        'list_users',
+        {'template': 'impersonate/list_users.html'},
+        name='impersonate-list'),
 )
