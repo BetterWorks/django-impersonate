@@ -115,6 +115,39 @@ You can reference this URL with reverse() or the {% url %} template tag
 as 'impersonate-search'
 
 
+Settings
+--------
+
+The following settings are available for django-impersonate:
+
+
+IMPERSONATE_REDIRECT_URL
+
+This is the URL you want to be redirected to after you have chosen to 
+impersonate another user. If this is not present it will check for 
+the LOGIN_REDIRECT_URL setting and fall back to '/' if neither is 
+present. Value should be a string containing the redirect path.
+
+
+IMPERSONATE_PAGINATE_COUNT
+
+This is the number of users to paginate by when using the list or 
+search views. This defaults to 20. Value should be an integer.
+
+
+IMPERSONATE_REQUIRE_SUPERUSER
+
+If this is set to True, then only users who have 'is_superuser' set 
+to True will be allowed to impersonate other users. Default is False. 
+If False, then any 'is_staff' user will be able to impersonate other 
+users.
+
+Note: Regardless of this setting, a 'is_staff' user will *not* be 
+allowed to impersonate a 'is_superuser' user.
+
+Value should be a boolean (True/False)
+
+
 Copyright & Warranty
 --------------------
 All documentation, libraries, and sample code are 
