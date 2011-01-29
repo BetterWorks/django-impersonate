@@ -59,7 +59,7 @@ urlpatterns = patterns('',
 Replace <user-id> with the user id of the user you want to impersonate.
 
 While in impersonation "mode" the request.user object will have an 
-"_impersonate" attribute set to True. So if you wanted to check in your 
+"is_impersonate" attribute set to True. So if you wanted to check in your 
 templates or view, you just do something like...
 
 {% if user._impersonate %} .... {% endif %}

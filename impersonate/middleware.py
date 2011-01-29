@@ -9,4 +9,4 @@ class ImpersonateMiddleware(object):
             new_user = request.session['_impersonate']
             if check_allow_for_user(request.user, new_user):
                 request.user = new_user
-                request.user._impersonate = True
+                request.user.is_impersonate = True
