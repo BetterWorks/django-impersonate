@@ -1,5 +1,5 @@
 from django.conf import settings
-from helpers import check_allow_for_user
+from helpers import check_allow_for_user, check_allow_for_uri
 
 
 class ImpersonateMiddleware(object):
@@ -7,6 +7,6 @@ class ImpersonateMiddleware(object):
         if request.user.is_authenticated() and \
            '_impersonate' in request.session:
             new_user = request.session['_impersonate']
-            if check_allow_for_user(request.user, new_user):
+            if check_allow_for_user(request.user, new_user) and check_allow_for_uri(request.path):
                 request.user = new_user
                 request.user.is_impersonate = True

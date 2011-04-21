@@ -42,3 +42,18 @@ def check_allow_for_user(start_user, end_user):
         return True
 
     return False
+
+def check_allow_for_uri(uri):
+    import re
+
+    uri = uri.lstrip('/')
+
+    exclusions = getattr(settings, 'IMPERSONATE_URI_EXCLUSIONS', (r'^admin/',))
+    if not isinstance(exclusions, (list, tuple)):
+        exclusions = (exclusions,)
+
+    for exclusion in exclusions:
+        if re.search(exclusion, uri):
+            return False
+
+    return True
