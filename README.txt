@@ -148,6 +148,17 @@ allowed to impersonate a 'is_superuser' user.
 Value should be a boolean (True/False)
 
 
+IMPERSONATE_URI_EXCLUSIONS
+
+Set to a list/tuple of url patterns that, if matched, user 
+impersonation is not completed. It defaults to:
+
+(r'^admin/',)
+
+If you do not want to use even the default exclusions then set 
+the setting to an emply list/tuple.
+
+
 Copyright & Warranty
 --------------------
 All documentation, libraries, and sample code are 

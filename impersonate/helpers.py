@@ -1,3 +1,4 @@
+import re
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage
 
@@ -43,9 +44,8 @@ def check_allow_for_user(start_user, end_user):
 
     return False
 
-def check_allow_for_uri(uri):
-    import re
 
+def check_allow_for_uri(uri):
     uri = uri.lstrip('/')
 
     exclusions = getattr(settings, 'IMPERSONATE_URI_EXCLUSIONS', (r'^admin/',))
