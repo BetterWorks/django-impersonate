@@ -2,12 +2,11 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.utils.http import urlquote
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from helpers import get_redir_path, check_allow_staff
+from helpers import get_redir_path, check_allow_impersonate
 
 
 def allowed_user_required(view_func):
     def _checkuser(request, *args, **kwargs):
-        allow_staff = check_allow_staff()
         if not request.user.is_authenticated():
             return redirect('%s?%s=%s' % (
                 settings.LOGIN_URL,
@@ -20,9 +19,11 @@ def allowed_user_required(view_func):
             # impersonate views.
             return redirect(get_redir_path())
 
-        if not request.user.is_superuser:
-            if not request.user.is_staff or not allow_staff:
-                return redirect(get_redir_path())
+        if check_allow_impersonate(request):
+            # user is allowed to impersonate
+            return view_func(request, *args, **kwargs)
+        else:
+            # user not allowed impersonate at all
+            return redirect(get_redir_path())
 
-        return view_func(request, *args, **kwargs)
     return _checkuser

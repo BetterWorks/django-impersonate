@@ -4,7 +4,7 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from decorators import allowed_user_required
-from helpers import get_redir_path, get_paginator, check_allow_for_user
+from helpers import get_redir_path, get_paginator, check_allow_for_user, users_impersonable
 
 
 @allowed_user_required
@@ -17,7 +17,7 @@ def impersonate(request, uid):
         request object as needed.
     '''
     new_user = get_object_or_404(User, pk=uid)
-    if check_allow_for_user(request.user, new_user):
+    if check_allow_for_user(request, new_user):
         request.session['_impersonate'] = new_user
         request.session.modified = True  # Let's make sure...
     return redirect(get_redir_path())
@@ -41,7 +41,8 @@ def list_users(request, template):
           * page - Current page of objects (from Paginator)
           * page_number - Current page number, defaults to 1
     '''
-    users = User.objects.all()
+    users = users_impersonable(request)
+
     paginator, page, page_number = get_paginator(request, users)
 
     return render_to_response(template, {
@@ -67,7 +68,9 @@ def search_users(request, template):
                Q(first_name__icontains=query) | \
                Q(last_name__icontains=query) | \
                Q(email__icontains=query)
-    users = User.objects.filter(search_q)
+    users = users_impersonable(request)
+
+    users = users.filter(search_q)
     paginator, page, page_number = get_paginator(request, users)
 
     return render_to_response(template, {
