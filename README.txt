@@ -147,6 +147,9 @@ allowed to impersonate a 'is_superuser' user.
 
 Value should be a boolean (True/False)
 
+If the IMPERSONATE_CUSTOM_ALLOW is set, then that custom function is used, and
+this setting is ignored.
+
 
 IMPERSONATE_URI_EXCLUSIONS
 
@@ -157,6 +160,36 @@ impersonation is not completed. It defaults to:
 
 If you do not want to use even the default exclusions then set 
 the setting to an emply list/tuple.
+
+
+IMPERSONATE_CUSTOM_USER_QUERYSET
+
+A string that represents a function (e.g. 'module.submodule.mod.function_name')
+that allows more fine grained control over what users a user can impersonate.
+It takes one argument, the request object, and should return a QuerySet. Only
+the users in this queryset can be impersonated.
+
+This function will not be called when the request has an unauthorised users,
+and will only be called when the user is allowed to impersonate (cf.
+IMPERSONATE_REQUIRE_SUPERUSER and IMPERSONATE_CUSTOM_ALLOW )
+
+Regardless of what this function returns, a user cannot impersonate a
+superuser, even if there are superusers in the returned QuerySet.
+
+It is optional, and if it is not present, the user can impersonate any user
+(i.e. the default is User.objects.all())
+
+
+IMPERSONATE_CUSTOM_ALLOW
+
+A string that represents a function (e.g. 'module.submodule.mod.function_name')
+that allows more fine grained control over who can use the impersonation. It
+takes one argument, the request object, and should return True to allow
+impesonation. Regardless of this setting, the user must be logged in to
+impersonate. If this setting is used, IMPERSONATE_REQUIRE_SUPERUSER is ignored.
+
+It is optional, and if it is not present, the previous rules about superuser
+and IMPERSONATE_REQUIRE_SUPERUSER apply.
 
 
 Copyright & Warranty
