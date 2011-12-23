@@ -115,6 +115,22 @@ You can reference this URL with reverse() or the {% url %} template tag
 as 'impersonate-search'
 
 
+== To allow some users to impersonate other users
+
+You can optionally allow only some non-superuser and non-staff users to impersonate by
+adding a IMPERSONATE_CUSTOM_ALLOW setting. Create a function that takes a
+request object, and based on your rules, returns True if the user is allowed to
+impersonate or not.
+
+== To limit what users a user can impersonate
+
+By, optionally, setting the IMPERSONATE_CUSTOM_USER_QUERYSET you can control
+what users can be impersonated. It takes a request object of the user, and
+returns a QuerySet of users. This is used when searching for users to
+impersonate, when listing what users to impersonate, and when trying to start
+impersonation.
+
+
 Settings
 --------
 
