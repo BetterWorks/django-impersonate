@@ -32,46 +32,62 @@ def get_paginator(request, qs):
 def check_allow_staff():
     return (not getattr(settings, 'IMPERSONATE_REQUIRE_SUPERUSER', False))
 
+
 def users_impersonable(request):
-    """Returns a QuerySet of users that this user can impersonate. Uses the IMPERSONATE_CUSTOM_USER_QUERYSET if set, else, it returns all users"""
+    ''' Returns a QuerySet of users that this user can impersonate. 
+        Uses the IMPERSONATE_CUSTOM_USER_QUERYSET if set, else, it 
+        returns all users
+    '''
     if hasattr(settings, 'IMPERSONATE_CUSTOM_USER_QUERYSET'):
-        custom_queryset_func = import_func_from_string(settings.IMPERSONATE_CUSTOM_USER_QUERYSET)
+        custom_queryset_func = import_func_from_string(
+            settings.IMPERSONATE_CUSTOM_USER_QUERYSET
+        )
         return custom_queryset_func(request)
     else:
         return User.objects.all()
 
+
 def check_allow_for_user(start_user_request, end_user):
-    """Return True if some request can impersonate end_user"""
+    ''' Return True if some request can impersonate end_user
+    '''
     if check_allow_impersonate(start_user_request):
         # start user can impersonate
-        # Can impersonate anyone who's not a superuser and who is in your queryset of 'who i can impersonate'
-        return (not end_user.is_superuser and users_impersonable(start_user_request).filter(pk=end_user.pk).exists())
+        # Can impersonate anyone who's not a superuser and who is in your 
+        # queryset of 'who i can impersonate'
+        upk = end_user.pk
+        return (
+            not end_user.is_superuser and \
+            users_impersonable(start_user_request).filter(pk=upk).exists()
+        )
     else:
         # start user not allowed impersonate at all
         return False
 
+
 def import_func_from_string(string_name):
-    """Given a string like 'mod.mod2.funcname' which refers to a function, return that function so it can be called"""
-    mod_name, func_name = string_name.rsplit(".", 1)
+    ''' Given a string like 'mod.mod2.funcname' which refers to a function, 
+        return that function so it can be called
+    '''
+    mod_name, func_name = string_name.rsplit('.', 1)
 
     # from http://docs.python.org/faq/programming.html?highlight=importlib#import-x-y-z-returns-module-x-how-do-i-get-z
     mod = __import__(mod_name)
-    for i in mod_name.split(".")[1:]:
+    for i in mod_name.split('.')[1:]:
         mod = getattr(mod, i)
 
     return getattr(mod, func_name)
 
-def check_allow_impersonate(request):
-    """
-    Returns True iff this request is allowed to do any impersonation.
-    Uses the IMPERSONATE_CUSTOM_ALLOW function if required, else looks at superuser/staff status and IMPERSONATE_REQUIRE_SUPERUSER
-    """
 
+def check_allow_impersonate(request):
+    ''' Returns True if this request is allowed to do any impersonation.
+        Uses the IMPERSONATE_CUSTOM_ALLOW function if required, else 
+        looks at superuser/staff status and IMPERSONATE_REQUIRE_SUPERUSER
+    '''
     if hasattr(settings, 'IMPERSONATE_CUSTOM_ALLOW'):
-        custom_allow_func = import_func_from_string(settings.IMPERSONATE_CUSTOM_ALLOW)
+        custom_allow_func = \
+            import_func_from_string(settings.IMPERSONATE_CUSTOM_ALLOW)
 
         return custom_allow_func(request)
-
     else:
         # default allow checking:
         if not request.user.is_superuser:
@@ -79,6 +95,7 @@ def check_allow_impersonate(request):
                 return False
 
         return True
+
 
 def check_allow_for_uri(uri):
     uri = uri.lstrip('/')
