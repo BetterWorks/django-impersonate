@@ -58,7 +58,7 @@ def check_allow_for_user(start_user_request, end_user):
         upk = end_user.pk
         return (
             not end_user.is_superuser and \
-            users_impersonable(start_user_request).filter(pk=upk).exists()
+            users_impersonable(start_user_request).filter(pk=upk).count()
         )
     else:
         # start user not allowed impersonate at all
