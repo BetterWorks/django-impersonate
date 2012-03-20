@@ -4,8 +4,8 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from decorators import allowed_user_required
-from helpers import get_redir_path, get_paginator, check_allow_for_user, \
-                    users_impersonable
+from impersonate.helpers import get_redir_path, get_paginator, \
+                                check_allow_for_user, users_impersonable
 
 
 @allowed_user_required

@@ -1,5 +1,5 @@
 from django.conf import settings
-from helpers import check_allow_for_user, check_allow_for_uri
+from impersonate.helpers import check_allow_for_user, check_allow_for_uri
 
 
 class ImpersonateMiddleware(object):
