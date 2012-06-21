@@ -48,21 +48,21 @@ def users_impersonable(request):
         return User.objects.all()
 
 
-def check_allow_for_user(start_user_request, end_user):
+def check_allow_for_user(request, end_user):
     ''' Return True if some request can impersonate end_user
     '''
-    if check_allow_impersonate(start_user_request):
+    if check_allow_impersonate(request):
         # start user can impersonate
         # Can impersonate anyone who's not a superuser and who is in your 
         # queryset of 'who i can impersonate'
         upk = end_user.pk
         return (
             not end_user.is_superuser and \
-            users_impersonable(start_user_request).filter(pk=upk).count()
+            users_impersonable(request).filter(pk=upk).count()
         )
-    else:
-        # start user not allowed impersonate at all
-        return False
+
+    # start user not allowed impersonate at all
+    return False
 
 
 def import_func_from_string(string_name):
@@ -92,7 +92,7 @@ def check_allow_impersonate(request):
     else:
         # default allow checking:
         if not request.user.is_superuser:
-            if not request.user.is_staff or not allow_staff:
+            if not request.user.is_staff or not check_allow_staff():
                 return False
 
         return True
