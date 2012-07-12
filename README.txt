@@ -62,7 +62,7 @@ While in impersonation "mode" the request.user object will have an
 "is_impersonate" attribute set to True. So if you wanted to check in your 
 templates or view, you just do something like...
 
-{% if user._impersonate %} .... {% endif %}
+{% if user.is_impersonate %} .... {% endif %}
 
 You can reference this URL with reverse() or the {% url %} template tag 
 as 'impersonate-start'
