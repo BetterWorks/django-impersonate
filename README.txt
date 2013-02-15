@@ -208,6 +208,22 @@ It is optional, and if it is not present, the previous rules about superuser
 and IMPERSONATE_REQUIRE_SUPERUSER apply.
 
 
+IMPERSONATE_REDIRECT_FIELD_NAME
+
+A string that represents the name of a request (GET) parameter which contains
+the URL to redirect to after impersonating a user. This can be used to redirect
+to a custom page after impersonating a user. Example:
+
+    # in settings.py
+    IMPERSONATE_REDIRECT_FIELD_NAME = 'next'
+    
+    # in your view
+    <a href="/impersonate/list/?next=/some/url/">switch user</a>
+
+To return always to the current page after impersonating a user, use 
+
+    <a href="/impersonate/list/?next={{request.path}}">switch user</a>
+
 Copyright & Warranty
 --------------------
 All documentation, libraries, and sample code are 

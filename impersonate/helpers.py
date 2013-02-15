@@ -2,15 +2,35 @@ import re
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
+from django.utils.safestring import mark_safe
 
  
-def get_redir_path():        
-    return getattr(
+def get_redir_path(request=None):
+    next = None
+    redirect_field_name = getattr(settings,'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    if request and redirect_field_name:
+        next = request.GET.get(redirect_field_name, None)
+    return next or getattr(
         settings,
         'IMPERSONATE_REDIRECT_URL',
         getattr(settings, 'LOGIN_REDIRECT_URL', '/'),
     )       
-        
+
+def get_redir_arg(request):
+    redirect_field_name = getattr(settings,'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    if redirect_field_name:
+        next = request.GET.get(redirect_field_name, None)
+        if next:
+            return '?%s=%s' % (redirect_field_name, next)
+    return '' 
+
+def get_redir_field(request):
+    redirect_field_name = getattr(settings,'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    if redirect_field_name:
+        next = request.GET.get(redirect_field_name, None)
+        if next:
+            return mark_safe('<input type="hidden" name="%s" value="%s"/>' % (redirect_field_name,next))
+    return '' 
     
 def get_paginator(request, qs):
     try:

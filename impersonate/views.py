@@ -4,8 +4,8 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from decorators import allowed_user_required
-from impersonate.helpers import get_redir_path, get_paginator, \
-                                check_allow_for_user, users_impersonable
+from impersonate.helpers import get_redir_path, get_redir_arg, get_redir_field,\
+                                get_paginator, check_allow_for_user, users_impersonable
 
 
 @allowed_user_required
@@ -21,7 +21,7 @@ def impersonate(request, uid):
     if check_allow_for_user(request, new_user):
         request.session['_impersonate'] = new_user
         request.session.modified = True  # Let's make sure...
-    return redirect(get_redir_path())
+    return redirect(get_redir_path(request))
 
 
 def stop_impersonate(request):
@@ -30,27 +30,29 @@ def stop_impersonate(request):
     if '_impersonate' in request.session:
         del request.session['_impersonate']
         request.session.modified = True
-    return redirect(get_redir_path())
+    return redirect(get_redir_path(request))
 
 
 @allowed_user_required
 def list_users(request, template):
     ''' List all users in the system.
-        Will add 4 items to the context.
+        Will add 5 items to the context.
           * users - queryset of all users
           * paginator - Django Paginator instance
           * page - Current page of objects (from Paginator)
           * page_number - Current page number, defaults to 1
+          * redirect - arg for redirect target, e.g. "?next=/foo/bar"
     '''
     users = users_impersonable(request)
 
     paginator, page, page_number = get_paginator(request, users)
-
+    
     return render_to_response(template, {
         'users': users,
         'paginator': paginator,
         'page': page,
         'page_number': page_number,
+        'redirect': get_redir_arg(request),
     }, context_instance=RequestContext(request))
 
 
@@ -80,4 +82,6 @@ def search_users(request, template):
         'page': page,
         'page_number': page_number,
         'query': query,
+        'redirect': get_redir_arg(request),
+        'redirect_field': get_redir_field(request),
     }, context_instance=RequestContext(request))
