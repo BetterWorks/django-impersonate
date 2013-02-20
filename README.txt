@@ -220,7 +220,7 @@ to a custom page after impersonating a user. Example:
     # in your view
     <a href="/impersonate/list/?next=/some/url/">switch user</a>
 
-To return always to the current page after impersonating a user, use 
+To return always to the current page after impersonating a user, use request.path: 
 
     <a href="/impersonate/list/?next={{request.path}}">switch user</a>
 

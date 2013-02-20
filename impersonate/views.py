@@ -4,17 +4,18 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from decorators import allowed_user_required
-from impersonate.helpers import get_redir_path, get_redir_arg, get_redir_field,\
-                                get_paginator, check_allow_for_user, users_impersonable
+from impersonate.helpers import get_redir_path, get_redir_arg, get_paginator,\
+                                get_redir_field, check_allow_for_user,\
+                                users_impersonable
 
 
 @allowed_user_required
 def impersonate(request, uid):
     ''' Takes in the UID of the user to impersonate.
-        View will fetch the User instance and store it 
+        View will fetch the User instance and store it
         in the request.session under the '_impersonate' key.
-        
-        The middleware will then pick up on it and adjust the 
+
+        The middleware will then pick up on it and adjust the
         request object as needed.
     '''
     new_user = get_object_or_404(User, pk=uid)
@@ -46,7 +47,7 @@ def list_users(request, template):
     users = users_impersonable(request)
 
     paginator, page, page_number = get_paginator(request, users)
-    
+
     return render_to_response(template, {
         'users': users,
         'paginator': paginator,
@@ -59,12 +60,15 @@ def list_users(request, template):
 @allowed_user_required
 def search_users(request, template):
     ''' Simple search through the users.
-        Will add 5 items to the context.
+        Will add 7 items to the context.
           * users - All users that match the query passed.
           * paginator - Django Paginator instance
           * page - Current page of objects (from Paginator)
           * page_number - Current page number, defaults to 1
           * query - The search query that was entered
+          * redirect - arg for redirect target, e.g. "?next=/foo/bar"
+          * redirect_field - hidden input field with redirect argument,
+                              put this inside search form
     '''
     query = request.GET.get('q', '')
     search_q = Q(username__icontains=query) | \

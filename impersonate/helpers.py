@@ -4,34 +4,41 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from django.utils.safestring import mark_safe
 
- 
+
 def get_redir_path(request=None):
     next = None
-    redirect_field_name = getattr(settings,'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    redirect_field_name = getattr(settings,
+                                  'IMPERSONATE_REDIRECT_FIELD_NAME', None)
     if request and redirect_field_name:
         next = request.GET.get(redirect_field_name, None)
     return next or getattr(
         settings,
         'IMPERSONATE_REDIRECT_URL',
         getattr(settings, 'LOGIN_REDIRECT_URL', '/'),
-    )       
+    )
+
 
 def get_redir_arg(request):
-    redirect_field_name = getattr(settings,'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    redirect_field_name = getattr(settings,
+                                  'IMPERSONATE_REDIRECT_FIELD_NAME', None)
     if redirect_field_name:
         next = request.GET.get(redirect_field_name, None)
         if next:
             return '?%s=%s' % (redirect_field_name, next)
-    return '' 
+    return ''
+
 
 def get_redir_field(request):
-    redirect_field_name = getattr(settings,'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    redirect_field_name = getattr(settings,
+                                  'IMPERSONATE_REDIRECT_FIELD_NAME', None)
     if redirect_field_name:
         next = request.GET.get(redirect_field_name, None)
         if next:
-            return mark_safe('<input type="hidden" name="%s" value="%s"/>' % (redirect_field_name,next))
-    return '' 
-    
+            return mark_safe('<input type="hidden" name="%s" value="%s"/>' %
+                             (redirect_field_name, next))
+    return ''
+
+
 def get_paginator(request, qs):
     try:
         page_number = int(request.GET.get('page', 1))
@@ -41,7 +48,7 @@ def get_paginator(request, qs):
     paginator = Paginator(
         qs,
         int(getattr(settings, 'IMPERSONATE_PAGINATE_COUNT', 20)),
-    )   
+    )
     try:
         page = paginator.page(page_number)
     except EmptyPage:
@@ -55,8 +62,8 @@ def check_allow_staff():
 
 
 def users_impersonable(request):
-    ''' Returns a QuerySet of users that this user can impersonate. 
-        Uses the IMPERSONATE_CUSTOM_USER_QUERYSET if set, else, it 
+    ''' Returns a QuerySet of users that this user can impersonate.
+        Uses the IMPERSONATE_CUSTOM_USER_QUERYSET if set, else, it
         returns all users
     '''
     if hasattr(settings, 'IMPERSONATE_CUSTOM_USER_QUERYSET'):
@@ -73,11 +80,11 @@ def check_allow_for_user(request, end_user):
     '''
     if check_allow_impersonate(request):
         # start user can impersonate
-        # Can impersonate anyone who's not a superuser and who is in your 
+        # Can impersonate anyone who's not a superuser and who is in your
         # queryset of 'who i can impersonate'
         upk = end_user.pk
         return (
-            not end_user.is_superuser and \
+            not end_user.is_superuser and
             users_impersonable(request).filter(pk=upk).count()
         )
 
@@ -86,7 +93,7 @@ def check_allow_for_user(request, end_user):
 
 
 def import_func_from_string(string_name):
-    ''' Given a string like 'mod.mod2.funcname' which refers to a function, 
+    ''' Given a string like 'mod.mod2.funcname' which refers to a function,
         return that function so it can be called
     '''
     mod_name, func_name = string_name.rsplit('.', 1)
@@ -101,7 +108,7 @@ def import_func_from_string(string_name):
 
 def check_allow_impersonate(request):
     ''' Returns True if this request is allowed to do any impersonation.
-        Uses the IMPERSONATE_CUSTOM_ALLOW function if required, else 
+        Uses the IMPERSONATE_CUSTOM_ALLOW function if required, else
         looks at superuser/staff status and IMPERSONATE_REQUIRE_SUPERUSER
     '''
     if hasattr(settings, 'IMPERSONATE_CUSTOM_ALLOW'):
