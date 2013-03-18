@@ -54,6 +54,7 @@ def list_users(request, template):
         'page': page,
         'page_number': page_number,
         'redirect': get_redir_arg(request),
+        'redirect_field': get_redir_field(request),
     }, context_instance=RequestContext(request))
 
 
