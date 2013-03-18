@@ -1,0 +1,74 @@
+[
+    {
+        "pk": 1, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "user1", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2012-11-18T21:39:07.470Z", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "pbkdf2_sha256$10000$rFUAeNe8N8AC$1BYYCs9seuca2NqBLLtO3wmNVdnBeSbASF2LhhFbp1k=", 
+            "email": "user1@test-email.com", 
+            "date_joined": "2012-11-18T21:39:07.470Z"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "user2", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2012-11-18T21:39:17.669Z", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "pbkdf2_sha256$10000$rFUAeNe8N8AC$1BYYCs9seuca2NqBLLtO3wmNVdnBeSbASF2LhhFbp1k=",
+            "email": "user2@test-email.com", 
+            "date_joined": "2012-11-18T21:39:17.669Z"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "user3", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": true, 
+            "last_login": "2012-11-19T01:47:54.213Z", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "pbkdf2_sha256$10000$rFUAeNe8N8AC$1BYYCs9seuca2NqBLLtO3wmNVdnBeSbASF2LhhFbp1k=", 
+            "email": "user3@test-email.com", 
+            "date_joined": "2012-11-19T01:47:54.213Z"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "user4", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2013-03-11T20:53:07.138Z", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "pbkdf2_sha256$10000$rFUAeNe8N8AC$1BYYCs9seuca2NqBLLtO3wmNVdnBeSbASF2LhhFbp1k=",
+            "email": "user4@test-email.com", 
+            "date_joined": "2013-03-11T20:51:37.424Z"
+        }
+    }
+]
