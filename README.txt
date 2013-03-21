@@ -227,6 +227,12 @@ To return always to the current page after impersonating a user, use request.pat
 Testing
 -------
 
+You need factory_boy installed for tests to run. To install, use:
+
+    $ pip install factory_boy
+
+Note: For more info on factory_boy, see: https://github.com/dnerdy/factory_boy
+
 From within your Django project, you can simply do:
 
     $ python manage.py test impersonate

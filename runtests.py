@@ -13,6 +13,11 @@ settings.configure(
     },
     USE_TZ=True,
     ROOT_URLCONF='{}.urls'.format(APP_NAME),
+    MIDDLEWARE_CLASSES=(
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'impersonate.middleware.ImpersonateMiddleware',
+    ),
     INSTALLED_APPS=(
         'django.contrib.auth',
         'django.contrib.contenttypes',
