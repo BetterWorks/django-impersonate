@@ -23,14 +23,15 @@ from urlparse import urlsplit
 from django.test import TestCase
 from django.utils import unittest
 from django.test.client import Client
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 try:
     # Django 1.5 check
     from django.contrib.auth import get_user_model
 except ImportError:
-    get_user_model = None
+    from django.contrib.auth.models import User
+else:
+    User = get_user_model()
 
 
 class TestImpersonation(TestCase):
@@ -38,7 +39,6 @@ class TestImpersonation(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user_model = get_user_model() if get_user_model else User
 
     def _impersonate_helper(self, user, passwd,
                             user_id_to_impersonate, qwargs={}):
@@ -59,7 +59,7 @@ class TestImpersonation(TestCase):
         self.assertEqual(path, new_path)
 
     def test_user_count(self):
-        self.assertEqual(self.user_model.objects.count(), 4)
+        self.assertEqual(User.objects.count(), 4)
 
     def test_dont_impersonate_superuser(self):
         response = self._impersonate_helper('user1', 'foobar', 2)
@@ -128,4 +128,33 @@ class TestImpersonation(TestCase):
         with self.settings(IMPERSONATE_PAGINATE_COUNT=2):
             response = self.client.get(reverse('impersonate-list'))
             self.assertEqual(response.context['paginator'].num_pages, 2)
+        self.client.logout()
+
+    def test_user_search_and_pagination(self):
+        self.client.login(username='user1', password='foobar')
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'john'},
+        )
+        self.assertEqual(response.context['users'].count(), 2)
+
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'doe'},
+        )
+        self.assertEqual(response.context['users'].count(), 1)
+
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'noresultsfound'},
+        )
+        self.assertEqual(response.context['users'].count(), 0)
+
+        with self.settings(IMPERSONATE_PAGINATE_COUNT=2):
+            response = self.client.get(
+                reverse('impersonate-search'),
+                {'q': 'test-email'},
+            )
+            self.assertEqual(response.context['paginator'].num_pages, 2)
+            self.assertEqual(response.context['users'].count(), 4)
         self.client.logout()

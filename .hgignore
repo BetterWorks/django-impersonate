@@ -1,6 +1,9 @@
 syntax:glob
-.svn
-.hgsvn
+.coverage
 settings_local.py
 .*.swp
 **.pyc
+
+
+syntax:regexp
+^htmlcov$

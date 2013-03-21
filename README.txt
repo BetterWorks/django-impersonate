@@ -223,6 +223,25 @@ To return always to the current page after impersonating a user, use request.pat
 
     <a href="/impersonate/list/?next={{request.path}}">switch user</a>
 
+
+Testing
+-------
+
+From within your Django project, you can simply do:
+
+    $ python manage.py test impersonate
+
+From the repo checkout, ensure you have Django in your PYTHONPATH and  run:
+
+    $ python runtests.py
+
+To get test coverage, use:
+
+    $ coverate run --branch runtests.py
+    $ coverage html  <- Pretty HTML files for you
+    $ coverage report -m  <- Ascii report
+
+
 Copyright & Warranty
 --------------------
 All documentation, libraries, and sample code are 
