@@ -1,6 +1,6 @@
 '''
     Tests
-    test_data.json contains 4 User accounts.
+    Factory creates 4 User accounts.
     user1:
         id = 1
         is_superuser = True
@@ -55,6 +55,13 @@ def test_allow(request):
         Simple check for the user to be auth'd and a staff member.
     '''
     return request.user.is_authenticated() and request.user.is_staff
+
+
+def test_allow2(request):
+    ''' Used via the IMPERSONATE_CUSTOM_ALLOW setting.
+        Always return False
+    '''
+    return False
 
 
 def test_qs(request):
@@ -173,6 +180,10 @@ class TestImpersonation(TestCase):
 
         self.client.logout()
 
+    def test_unsuccessful_request_unauth_user(self):
+        response = self.client.get(reverse('impersonate-list'))
+        self._redirect_check(response, '/accounts/login/')
+
     def test_successful_impersonation_redirect_url(self):
         with self.settings(IMPERSONATE_REDIRECT_URL='/test-redirect/'):
             response = self._impersonate_helper('user1', 'foobar', 4)
@@ -273,6 +284,15 @@ class TestImpersonation(TestCase):
         response = self.client.get(reverse('impersonate-list'))
         self.assertEqual(response.context['users'].count(), 4)
         self.client.logout()
+
+    def test_custom_user_allow_function_false(self):
+        ''' Edge case test.
+        '''
+        response = self._impersonate_helper('user1', 'foobar', 4)
+        with self.settings(
+                IMPERSONATE_CUSTOM_ALLOW='impersonate.tests.test_allow2'):
+            response = self.client.get(reverse('impersonate-test'))
+            self.assertEqual(('user1' in response.content), True) # NOT user4
 
     @override_settings(
         IMPERSONATE_CUSTOM_USER_QUERYSET='impersonate.tests.test_qs')
