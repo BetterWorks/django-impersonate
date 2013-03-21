@@ -7,3 +7,4 @@ settings_local.py
 
 syntax:regexp
 ^htmlcov$
+^env$

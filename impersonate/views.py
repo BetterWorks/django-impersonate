@@ -1,12 +1,13 @@
-from django.conf import settings
 from django.db.models import Q
+from django.conf import settings
 from django.template import RequestContext
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect, render_to_response
 from decorators import allowed_user_required
-from impersonate.helpers import get_redir_path, get_redir_arg, get_paginator,\
-                                get_redir_field, check_allow_for_user,\
-                                users_impersonable
+from django.shortcuts import get_object_or_404, redirect, render
+from impersonate.helpers import (
+    get_redir_path, get_redir_arg, get_paginator, get_redir_field,
+    check_allow_for_user, users_impersonable
+)
 
 
 @allowed_user_required
@@ -48,14 +49,14 @@ def list_users(request, template):
 
     paginator, page, page_number = get_paginator(request, users)
 
-    return render_to_response(template, {
+    return render(request, template, {
         'users': users,
         'paginator': paginator,
         'page': page,
         'page_number': page_number,
         'redirect': get_redir_arg(request),
         'redirect_field': get_redir_field(request),
-    }, context_instance=RequestContext(request))
+    })
 
 
 @allowed_user_required
@@ -81,7 +82,7 @@ def search_users(request, template):
     users = users.filter(search_q)
     paginator, page, page_number = get_paginator(request, users)
 
-    return render_to_response(template, {
+    return render(request, template, {
         'users': users,
         'paginator': paginator,
         'page': page,
@@ -89,4 +90,4 @@ def search_users(request, template):
         'query': query,
         'redirect': get_redir_arg(request),
         'redirect_field': get_redir_field(request),
-    }, context_instance=RequestContext(request))
+    })

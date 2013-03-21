@@ -15,7 +15,7 @@ def allowed_user_required(view_func):
             ))
 
         if getattr(request.user, 'is_impersonate', False):
-            # Do not allow an impersonated session to use the 
+            # Do not allow an impersonated session to use the
             # impersonate views.
             return redirect(get_redir_path())
 

@@ -12,6 +12,9 @@ It was written for Python 2.6+ and Django 1.4+
 
 It depends on your project using the django.contrib.session framework.
 
+NOTE: If you need to use this with Django older than 1.4, please use 
+version django-impersonate == 0.5.3
+
 
 Install
 -------

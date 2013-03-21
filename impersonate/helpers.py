@@ -1,14 +1,17 @@
 import re
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, EmptyPage
 from django.utils.safestring import mark_safe
+from django.core.paginator import Paginator, EmptyPage
 
 
 def get_redir_path(request=None):
     next = None
-    redirect_field_name = getattr(settings,
-                                  'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    redirect_field_name = getattr(
+        settings,
+        'IMPERSONATE_REDIRECT_FIELD_NAME',
+        None,
+    )
     if request and redirect_field_name:
         next = request.GET.get(redirect_field_name, None)
     return next or getattr(
@@ -19,8 +22,11 @@ def get_redir_path(request=None):
 
 
 def get_redir_arg(request):
-    redirect_field_name = getattr(settings,
-                                  'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    redirect_field_name = getattr(
+        settings,
+        'IMPERSONATE_REDIRECT_FIELD_NAME',
+        None,
+    )
     if redirect_field_name:
         next = request.GET.get(redirect_field_name, None)
         if next:
@@ -29,13 +35,20 @@ def get_redir_arg(request):
 
 
 def get_redir_field(request):
-    redirect_field_name = getattr(settings,
-                                  'IMPERSONATE_REDIRECT_FIELD_NAME', None)
+    redirect_field_name = getattr(
+        settings,
+        'IMPERSONATE_REDIRECT_FIELD_NAME',
+        None,
+    )
     if redirect_field_name:
         next = request.GET.get(redirect_field_name, None)
         if next:
-            return mark_safe('<input type="hidden" name="%s" value="%s"/>' %
-                             (redirect_field_name, next))
+            return mark_safe(
+                '<input type="hidden" name="{0}" value="{1}"/>'.format(
+                    redirect_field_name,
+                    next,
+                )
+            )
     return ''
 
 
@@ -85,7 +98,7 @@ def check_allow_for_user(request, end_user):
         upk = end_user.pk
         return (
             not end_user.is_superuser and
-            users_impersonable(request).filter(pk=upk).count()
+            users_impersonable(request).filter(pk=upk).exists()
         )
 
     # start user not allowed impersonate at all
