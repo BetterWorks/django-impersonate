@@ -12,7 +12,7 @@ settings.configure(
         }
     },
     USE_TZ=True,
-    ROOT_URLCONF='{}.urls'.format(APP_NAME),
+    ROOT_URLCONF='{}.tests'.format(APP_NAME),
     MIDDLEWARE_CLASSES=(
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',

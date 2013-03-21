@@ -23,9 +23,11 @@ import factory
 from urlparse import urlsplit
 from django.test import TestCase
 from django.utils import unittest
+from django.http import HttpResponse
 from django.test.client import Client
-from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
+from django.test.utils import override_settings
+from django.conf.urls.defaults import patterns, url, include
 
 try:
     # Django 1.5 check
@@ -36,17 +38,38 @@ else:
     User = get_user_model()
 
 
+urlpatterns = patterns('',
+    url(r'^test-view/$',
+        'impersonate.tests.test_view',
+        name='impersonate-test'),
+    ('^', include('impersonate.urls')),
+)
+
+
+def test_view(request):
+    return HttpResponse('OK {0}'.format(request.user))
+
+
+def test_allow(request):
+    ''' Used via the IMPERSONATE_CUSTOM_ALLOW setting.
+        Simple check for the user to be auth'd and a staff member.
+    '''
+    return request.user.is_authenticated() and request.user.is_staff
+
+
+def test_qs(request):
+    ''' Used via the IMPERSONATE_CUSTOM_USER_QUERYSET setting.
+        Simple function to return all users.
+    '''
+    return User.objects.all()
+
+
 class UserFactory(factory.Factory):
     FACTORY_FOR = User
 
-    username = ''
-    first_name = ''
-    last_name = ''
     email = factory.LazyAttribute(
         lambda a: '{0}@test-email.com'.format(a.username).lower()
     )
-    is_superuser = False
-    is_staff = False
 
     @classmethod
     def _prepare(cls, create, **kwargs):
@@ -123,17 +146,31 @@ class TestImpersonation(TestCase):
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
+    @override_settings(IMPERSONATE_REQUIRE_SUPERUSER=True)
+    def test_unsuccessful_impersonation_by_staff(self):
+        response = self._impersonate_helper('user3', 'foobar', 4)
+        self.assertEqual(self.client.session.get('_impersonate'), None)
+        self.client.logout()
+
     def test_unsuccessful_impersonation(self):
         response = self._impersonate_helper('user4', 'foobar', 3)
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
-    @override_settings(LOGIN_REDIRECT_URL='/test-redirect/')
     def test_unsuccessful_impersonation_restricted_uri(self):
         response = self._impersonate_helper('user1', 'foobar', 4)
         self.assertEqual(self.client.session['_impersonate'].id, 4)
-        response = self.client.get(reverse('impersonate-list'))
-        self._redirect_check(response, '/test-redirect/')
+
+        # Don't allow impersonated users to use impersonate views
+        with self.settings(LOGIN_REDIRECT_URL='/test-redirect/'):
+            response = self.client.get(reverse('impersonate-list'))
+            self._redirect_check(response, '/test-redirect/')
+
+        # Don't allow impersonated users to use restricted URI's
+        with self.settings(IMPERSONATE_URI_EXCLUSIONS=r'^test-view/'):
+            response = self.client.get(reverse('impersonate-test'))
+            self.assertEqual(('user1' in response.content), True) # NOT user4
+
         self.client.logout()
 
     def test_successful_impersonation_redirect_url(self):
@@ -214,4 +251,33 @@ class TestImpersonation(TestCase):
             )
             self.assertEqual(response.context['paginator'].num_pages, 2)
             self.assertEqual(response.context['users'].count(), 4)
+        self.client.logout()
+
+    @override_settings(IMPERSONATE_REDIRECT_FIELD_NAME='next')
+    def test_redirect_field_name(self):
+        self.client.login(username='user1', password='foobar')
+        response = self.client.get(reverse('impersonate-list'))
+        self.assertEqual(response.context['redirect'], '')
+
+        # Add redirect value to query
+        response = self.client.get(
+            reverse('impersonate-list'),
+            {'next': '/test/'},
+        )
+        self.assertEqual(response.context['redirect'], '?next=/test/')
+        self.client.logout()
+
+    @override_settings(IMPERSONATE_CUSTOM_ALLOW='impersonate.tests.test_allow')
+    def test_custom_user_allow_function(self):
+        self.client.login(username='user1', password='foobar')
+        response = self.client.get(reverse('impersonate-list'))
+        self.assertEqual(response.context['users'].count(), 4)
+        self.client.logout()
+
+    @override_settings(
+        IMPERSONATE_CUSTOM_USER_QUERYSET='impersonate.tests.test_qs')
+    def test_custom_user_queryset_function(self):
+        self.client.login(username='user1', password='foobar')
+        response = self.client.get(reverse('impersonate-list'))
+        self.assertEqual(response.context['users'].count(), 4)
         self.client.logout()
