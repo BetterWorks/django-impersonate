@@ -1,8 +1,15 @@
 import re
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.core.paginator import Paginator, EmptyPage
+
+try:
+    # Django 1.5 check
+    from django.contrib.auth import get_user_model
+except ImportError:
+    from django.contrib.auth.models import User
+else:
+    User = get_user_model()
 
 
 def get_redir_path(request=None):

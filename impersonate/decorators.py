@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.utils.http import urlquote
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from impersonate.helpers import get_redir_path, check_allow_impersonate
+from .helpers import get_redir_path, check_allow_impersonate
 
 
 def allowed_user_required(view_func):

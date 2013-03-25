@@ -1,13 +1,20 @@
 from django.db.models import Q
 from django.conf import settings
 from django.template import RequestContext
-from django.contrib.auth.models import User
-from decorators import allowed_user_required
 from django.shortcuts import get_object_or_404, redirect, render
-from impersonate.helpers import (
+from .decorators import allowed_user_required
+from .helpers import (
     get_redir_path, get_redir_arg, get_paginator, get_redir_field,
     check_allow_for_user, users_impersonable
 )
+
+try:
+    # Django 1.5 check
+    from django.contrib.auth import get_user_model
+except ImportError:
+    from django.contrib.auth.models import User
+else:
+    User = get_user_model()
 
 
 @allowed_user_required
