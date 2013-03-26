@@ -1,5 +1,4 @@
 from django.db.models import Q
-from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404, redirect, render
 from .decorators import allowed_user_required
