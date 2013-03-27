@@ -13,15 +13,15 @@ else:
 
 
 def get_redir_path(request=None):
-    next = None
+    nextval = None
     redirect_field_name = getattr(
         settings,
         'IMPERSONATE_REDIRECT_FIELD_NAME',
         None,
     )
     if request and redirect_field_name:
-        next = request.GET.get(redirect_field_name, None)
-    return next or getattr(
+        nextval = request.GET.get(redirect_field_name, None)
+    return nextval or getattr(
         settings,
         'IMPERSONATE_REDIRECT_URL',
         getattr(settings, 'LOGIN_REDIRECT_URL', '/'),
@@ -35,9 +35,9 @@ def get_redir_arg(request):
         None,
     )
     if redirect_field_name:
-        next = request.GET.get(redirect_field_name, None)
-        if next:
-            return '?%s=%s' % (redirect_field_name, next)
+        nextval = request.GET.get(redirect_field_name, None)
+        if nextval:
+            return '?%s=%s' % (redirect_field_name, nextval)
     return ''
 
 
@@ -48,12 +48,12 @@ def get_redir_field(request):
         None,
     )
     if redirect_field_name:
-        next = request.GET.get(redirect_field_name, None)
-        if next:
+        nextval = request.GET.get(redirect_field_name, None)
+        if nextval:
             return mark_safe(
                 '<input type="hidden" name="{0}" value="{1}"/>'.format(
                     redirect_field_name,
-                    next,
+                    nextval,
                 )
             )
     return ''
