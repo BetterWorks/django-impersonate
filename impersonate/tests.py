@@ -113,7 +113,7 @@ class TestImpersonation(TestCase):
         self.client.login(username=user, password=passwd)
         url = reverse('impersonate-start', args=[user_id_to_impersonate])
         if qwargs:
-            url += '?{}'.format(urllib.urlencode(qwargs))
+            url += '?{0}'.format(urllib.urlencode(qwargs))
         return self.client.get(url)
 
     def _redirect_check(self, response, new_path):

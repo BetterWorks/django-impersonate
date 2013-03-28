@@ -12,7 +12,7 @@ settings.configure(
         }
     },
     USE_TZ=True,
-    ROOT_URLCONF='{}.tests'.format(APP_NAME),
+    ROOT_URLCONF='{0}.tests'.format(APP_NAME),
     MIDDLEWARE_CLASSES=(
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -27,8 +27,9 @@ settings.configure(
     ),
 )
 
-from django.test.simple import DjangoTestSuiteRunner
-test_runner = DjangoTestSuiteRunner(verbosity=1)
+from django.test.utils import get_runner
+TestRunner = get_runner(settings)
+test_runner = TestRunner()
 failures = test_runner.run_tests([APP_NAME])
 if failures:
     sys.exit(failures)

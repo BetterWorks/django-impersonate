@@ -1,8 +1,10 @@
 syntax:glob
 .coverage
+.tox
 settings_local.py
 .*.swp
 **.pyc
+MANIFEST
 
 
 syntax:regexp
