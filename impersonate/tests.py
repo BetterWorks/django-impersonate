@@ -18,7 +18,6 @@
         is_superuser = False
         is_staff = False
 '''
-import factory
 from django.utils import six
 from django.test import TestCase
 from django.utils import unittest
@@ -29,8 +28,10 @@ from django.test.utils import override_settings
 from django.conf.urls.defaults import patterns, url, include
 
 try:
+    # Python 3
     from urllib.parse import urlencode, urlsplit
 except ImportError:
+    import factory
     from urllib import urlencode
     from urlparse import urlsplit
 
