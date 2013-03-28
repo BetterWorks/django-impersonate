@@ -37,7 +37,7 @@ def get_redir_arg(request):
     if redirect_field_name:
         nextval = request.GET.get(redirect_field_name, None)
         if nextval:
-            return '?%s=%s' % (redirect_field_name, nextval)
+            return '?{0}={1}'.format(redirect_field_name, nextval)
     return ''
 
 

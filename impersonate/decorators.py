@@ -8,7 +8,7 @@ from .helpers import get_redir_path, check_allow_impersonate
 def allowed_user_required(view_func):
     def _checkuser(request, *args, **kwargs):
         if not request.user.is_authenticated():
-            return redirect('%s?%s=%s' % (
+            return redirect('{0}?{1}={2}'.format(
                 settings.LOGIN_URL,
                 REDIRECT_FIELD_NAME,
                 urlquote(request.get_full_path()),
