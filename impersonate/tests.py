@@ -18,9 +18,7 @@
         is_superuser = False
         is_staff = False
 '''
-import urllib
-import factory
-from urlparse import urlsplit
+from django.utils import six
 from django.test import TestCase
 from django.utils import unittest
 from django.http import HttpResponse
@@ -28,6 +26,14 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.conf.urls.defaults import patterns, url, include
+
+try:
+    # Python 3
+    from urllib.parse import urlencode, urlsplit
+except ImportError:
+    import factory
+    from urllib import urlencode
+    from urlparse import urlsplit
 
 try:
     # Django 1.5 check
@@ -71,22 +77,36 @@ def test_qs(request):
     return User.objects.all()
 
 
-class UserFactory(factory.Factory):
-    FACTORY_FOR = User
-
-    email = factory.LazyAttribute(
-        lambda a: '{0}@test-email.com'.format(a.username).lower()
-    )
-
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        password = kwargs.pop('password', None)
-        user = super(UserFactory, cls)._prepare(create, **kwargs)
-        if password:
-            user.set_password(password)
-            if create:
+if six.PY3:
+    # Temporary until factory_boy gets Py3k support
+    class UserFactory(object):
+        @staticmethod
+        def create(**kwargs):
+            password = kwargs.pop('password', None)
+            kwargs['email'] = \
+                '{0}@test-email.com'.format(kwargs['username']).lower()
+            user = User.objects.create(**kwargs)
+            if password:
+                user.set_password(password)
                 user.save()
-        return user
+            return user
+else:
+    class UserFactory(factory.Factory):
+        FACTORY_FOR = User
+
+        email = factory.LazyAttribute(
+            lambda a: '{0}@test-email.com'.format(a.username).lower()
+        )
+
+        @classmethod
+        def _prepare(cls, create, **kwargs):
+            password = kwargs.pop('password', None)
+            user = super(UserFactory, cls)._prepare(create, **kwargs)
+            if password:
+                user.set_password(password)
+                if create:
+                    user.save()
+            return user
 
 
 class TestImpersonation(TestCase):
@@ -113,7 +133,7 @@ class TestImpersonation(TestCase):
         self.client.login(username=user, password=passwd)
         url = reverse('impersonate-start', args=[user_id_to_impersonate])
         if qwargs:
-            url += '?{0}'.format(urllib.urlencode(qwargs))
+            url += '?{0}'.format(urlencode(qwargs))
         return self.client.get(url)
 
     def _redirect_check(self, response, new_path):
@@ -176,7 +196,7 @@ class TestImpersonation(TestCase):
         # Don't allow impersonated users to use restricted URI's
         with self.settings(IMPERSONATE_URI_EXCLUSIONS=r'^test-view/'):
             response = self.client.get(reverse('impersonate-test'))
-            self.assertEqual(('user1' in response.content), True) # NOT user4
+            self.assertEqual(('user1' in str(response.content)), True) # !user4
 
         self.client.logout()
 
@@ -292,7 +312,7 @@ class TestImpersonation(TestCase):
         with self.settings(
                 IMPERSONATE_CUSTOM_ALLOW='impersonate.tests.test_allow2'):
             response = self.client.get(reverse('impersonate-test'))
-            self.assertEqual(('user1' in response.content), True) # NOT user4
+            self.assertEqual(('user1' in str(response.content)), True) # !user4
 
     @override_settings(
         IMPERSONATE_CUSTOM_USER_QUERYSET='impersonate.tests.test_qs')
