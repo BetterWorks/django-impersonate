@@ -64,6 +64,10 @@ templates or view, you just do something like...
 
     {% if user.is_impersonate %} .... {% endif %}
 
+The original user is available as "request.impersonator".
+
+    {{ request.user }} ({{ request.impersonator }})
+
 You can reference this URL with reverse() or the {% url %} template tag 
 as 'impersonate-start'
 

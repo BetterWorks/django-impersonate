@@ -22,7 +22,7 @@ from django.utils import six
 from django.test import TestCase
 from django.utils import unittest
 from django.http import HttpResponse
-from django.test.client import Client
+from django.test.client import Client, RequestFactory
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.conf.urls.defaults import patterns, url, include
@@ -107,6 +107,29 @@ else:
                 if create:
                     user.save()
             return user
+
+
+class TestMiddleware(TestCase):
+    def setUp(self):
+        from impersonate.middleware import ImpersonateMiddleware
+
+        self.superuser = UserFactory(username='superuser', is_superuser=True)
+        self.user = UserFactory(username='regular')
+        self.factory = RequestFactory()
+        self.middleware = ImpersonateMiddleware()
+
+    def test_impersonated_request(self):
+        request = self.factory.get('/')
+        request.user = self.superuser
+        request.session = {
+            '_impersonate': self.user
+        }
+        self.middleware.process_request(request)
+
+        # Check request.user and request.user.real_user
+        self.assertEqual(request.user, self.user)
+        self.assertEqual(request.impersonator, self.superuser)
+        self.assertTrue(request.user.is_impersonate)
 
 
 class TestImpersonation(TestCase):
