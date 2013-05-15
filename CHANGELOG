@@ -1,13 +1,37 @@
 Changes
 -------
 
-1.5.1 (2012-03-04):
+0.7.1 (not officially released)
 
-- Fixed Issue #3
+- Added "impersonator" to request object. (Issue #5)
+- Ditched custom import method for django importlib. (Issue #6)
+- Updated Authors & Changelog
+
+0.7.0 (2013-03-28)
+
+- Added Python 3.3 support.
+
+0.6.0 (2013-03-21)
+
+- Added Django 1.5 support
+- Added full test coverage support (Issue #1)
+
+0.5.3 (2012-06-20)
+
+- Fixed Issue impersonating with a staff user (Issue #4)
+
+0.5.2 (2012-03-20)
+
+- Minor updates. Authors and changelog file
+
+0.5.1 (2012-03-04):
+
+- Fixed Django 1.1 compatibility problem (Issue #2)
+- Fixed missing templates directory (Issue  #3)
 - Updated AUTHORS file
 
 PREVIOUS VERSIONS:
 
-- I've been a bad boy and haven't been keeping a changelog.
-  I'll keep this updated moving forward. If you're really 
-  interested, read the commit history ;)
+I've been a bad boy and haven't been keeping a changelog.
+I'll keep this updated moving forward. If you're really 
+interested, read the commit history ;)
