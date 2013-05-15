@@ -1,6 +1,7 @@
 import re
 from django.conf import settings
 from django.utils.safestring import mark_safe
+from django.utils.importlib import import_module
 from django.core.paginator import Paginator, EmptyPage
 
 try:
@@ -117,12 +118,7 @@ def import_func_from_string(string_name):
         return that function so it can be called
     '''
     mod_name, func_name = string_name.rsplit('.', 1)
-
-    # from http://docs.python.org/faq/programming.html?highlight=importlib#import-x-y-z-returns-module-x-how-do-i-get-z
-    mod = __import__(mod_name)
-    for i in mod_name.split('.')[1:]:
-        mod = getattr(mod, i)
-
+    mod = import_module(mod_name)
     return getattr(mod, func_name)
 
 
