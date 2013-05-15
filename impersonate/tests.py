@@ -113,8 +113,11 @@ class TestMiddleware(TestCase):
     def setUp(self):
         from impersonate.middleware import ImpersonateMiddleware
 
-        self.superuser = UserFactory(username='superuser', is_superuser=True)
-        self.user = UserFactory(username='regular')
+        self.superuser = UserFactory.create(
+            username='superuser',
+            is_superuser=True,
+        )
+        self.user = UserFactory.create(username='regular')
         self.factory = RequestFactory()
         self.middleware = ImpersonateMiddleware()
 
