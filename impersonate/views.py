@@ -6,6 +6,7 @@ from .helpers import (
     get_redir_path, get_redir_arg, get_paginator, get_redir_field,
     check_allow_for_user, users_impersonable
 )
+from .signals import session_begin, session_end
 
 try:
     # Django 1.5 check
@@ -29,15 +30,28 @@ def impersonate(request, uid):
     if check_allow_for_user(request, new_user):
         request.session['_impersonate'] = new_user
         request.session.modified = True  # Let's make sure...
+        # can be used to hook up auditing of the session
+        session_begin.send(
+            sender=None,
+            impersonator=request.user,
+            impersonating=new_user,
+            request=request
+        )
     return redirect(get_redir_path(request))
 
 
 def stop_impersonate(request):
     ''' Remove the impersonation object from the session
     '''
-    if '_impersonate' in request.session:
-        del request.session['_impersonate']
+    impersonating = request.session.pop('_impersonate', None)
+    if impersonating is not None:
         request.session.modified = True
+        session_end.send(
+            sender=None,
+            impersonator=request.impersonator,
+            impersonating=impersonating,
+            request=request
+        )
     return redirect(get_redir_path(request))
 
 

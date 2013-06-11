@@ -26,6 +26,8 @@ from django.test.client import Client, RequestFactory
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.conf.urls.defaults import patterns, url, include
+from django.dispatch import receiver
+from .signals import session_begin, session_end
 
 try:
     # Python 3
@@ -136,6 +138,7 @@ class TestMiddleware(TestCase):
 
 
 class TestImpersonation(TestCase):
+
     def setUp(self):
         self.client = Client()
         user_data = (
@@ -191,6 +194,31 @@ class TestImpersonation(TestCase):
         self.client.get(reverse('impersonate-stop'))
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
+
+
+    def test_successful_impersonation_signals(self):
+
+        def on_session_begin(sender, **kwargs):
+            self.assertIsNone(sender)
+            self.assertIsNotNone(kwargs.pop('request', None))
+            self.assertEqual(kwargs.pop('impersonator').username, 'user1')
+            self.assertEqual(kwargs.pop('impersonating').username, 'user4')
+
+        def on_session_end(sender, **kwargs):
+            self.assertIsNone(sender)
+            self.assertIsNotNone(kwargs.pop('request', None))
+            self.assertEqual(kwargs.pop('impersonator').username, 'user1')
+            self.assertEqual(kwargs.pop('impersonating').username, 'user4')
+
+        session_begin.connect(on_session_begin)
+        session_end.connect(on_session_end)
+        response = self._impersonate_helper('user1', 'foobar', 4)
+        self.assertEqual(self.client.session['_impersonate'].id, 4)
+        self.client.get(reverse('impersonate-stop'))
+        self.assertEqual(self.client.session.get('_impersonate'), None)
+        self.client.logout()
+        session_begin.disconnect(on_session_begin)
+        session_end.disconnect(on_session_end)
 
     def test_successsful_impersonation_by_staff(self):
         response = self._impersonate_helper('user3', 'foobar', 4)
