@@ -104,8 +104,8 @@ else:
             user = super(UserFactory, cls)._prepare(create, **kwargs)
             if password:
                 user.set_password(password)
-                if create:
-                    user.save()
+            if create:
+                user.save()
             return user
 
 
@@ -199,9 +199,22 @@ class TestImpersonation(TestCase):
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
+    @override_settings(IMPERSONATE_ALLOW_SUPERUSER=True)
+    def test_successful_impersonation_of_superuser(self):
+        response = self._impersonate_helper('user1', 'foobar', 2)
+        self.client.get(reverse('impersonate-stop'))
+        self.assertEqual(self.client.session.get('_impersonate'), None)
+        self.client.logout()
+
     @override_settings(IMPERSONATE_REQUIRE_SUPERUSER=True)
     def test_unsuccessful_impersonation_by_staff(self):
         response = self._impersonate_helper('user3', 'foobar', 4)
+        self.assertEqual(self.client.session.get('_impersonate'), None)
+        self.client.logout()
+
+    @override_settings(IMPERSONATE_ALLOW_SUPERUSER=False)
+    def test_unsuccessful_impersonation_of_superuser(self):
+        response = self._impersonate_helper('user1', 'foobar', 2)
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
