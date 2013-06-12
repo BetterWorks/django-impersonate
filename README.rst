@@ -58,8 +58,8 @@ Functionality
 
 Replace <user-id> with the user id of the user you want to impersonate.
 
-While in impersonation "mode" the request.user object will have an 
-"is_impersonate" attribute set to True. So if you wanted to check in your 
+While in impersonation "mode" the request.user object will have an
+"is_impersonate" attribute set to True. So if you wanted to check in your
 templates or view, you just do something like...
 
     {% if user.is_impersonate %} .... {% endif %}
@@ -68,7 +68,7 @@ The original user is available as "request.impersonator".
 
     {{ request.user }} ({{ request.impersonator }})
 
-You can reference this URL with reverse() or the {% url %} template tag 
+You can reference this URL with reverse() or the {% url %} template tag
 as 'impersonate-start'
 
 
@@ -76,7 +76,7 @@ as 'impersonate-start'
 
     /impersonate/stop/
 
-You can reference this URL with reverse() or the {% url %} template tag 
+You can reference this URL with reverse() or the {% url %} template tag
 as 'impersonate-stop'
 
 
@@ -84,12 +84,12 @@ as 'impersonate-stop'
 
     /impersonate/list/
 
-This will render the template 'impersonate/list_users.html' and will pass 
+This will render the template 'impersonate/list_users.html' and will pass
 the following in the context:
 
 * users - queryset of all users
 * paginator - Django Paginator instance
-* page - Current page of objects (from Paginator) 
+* page - Current page of objects (from Paginator)
 * page_number - Current page number, defaults to 1
 
 You can reference this URL with reverse() or the {% url %} template tag
@@ -100,17 +100,17 @@ as 'impersonate-list'
 
     /impersonate/search/
 
-This will render the template 'impersonate/search_users.html' and will pass 
+This will render the template 'impersonate/search_users.html' and will pass
 the following in the context:
 
 * users - queryset of all users
 * paginator - Django Paginator instance
-* page - Current page of objects (from Paginator) 
+* page - Current page of objects (from Paginator)
 * page_number - Current page number, defaults to 1
 * query - The search query that was entered
 
-The view will expect a GET request and look for the 'q' variable being passed. 
-If present, it will search the user entries with the value of 'q'. The fields 
+The view will expect a GET request and look for the 'q' variable being passed.
+If present, it will search the user entries with the value of 'q'. The fields
 searched are:
 
 User.username, User.first_name, User.last_name, User.email
@@ -136,26 +136,26 @@ The following settings are available for django-impersonate:
 
     IMPERSONATE_REDIRECT_URL
 
-This is the URL you want to be redirected to after you have chosen to 
-impersonate another user. If this is not present it will check for 
-the LOGIN_REDIRECT_URL setting and fall back to '/' if neither is 
+This is the URL you want to be redirected to after you have chosen to
+impersonate another user. If this is not present it will check for
+the LOGIN_REDIRECT_URL setting and fall back to '/' if neither is
 present. Value should be a string containing the redirect path.
 
 
     IMPERSONATE_PAGINATE_COUNT
 
-This is the number of users to paginate by when using the list or 
+This is the number of users to paginate by when using the list or
 search views. This defaults to 20. Value should be an integer.
 
 
     IMPERSONATE_REQUIRE_SUPERUSER
 
-If this is set to True, then only users who have 'is_superuser' set 
-to True will be allowed to impersonate other users. Default is False. 
-If False, then any 'is_staff' user will be able to impersonate other 
+If this is set to True, then only users who have 'is_superuser' set
+to True will be allowed to impersonate other users. Default is False.
+If False, then any 'is_staff' user will be able to impersonate other
 users.
 
-**Note:** Regardless of this setting, a 'is_staff' user will **not** be 
+**Note:** Regardless of this setting, a 'is_staff' user will **not** be
 allowed to impersonate a 'is_superuser' user.
 
 Value should be a boolean (True/False)
@@ -164,14 +164,21 @@ If the IMPERSONATE_CUSTOM_ALLOW is set, then that custom function is used, and
 this setting is ignored.
 
 
+    IMPERSONATE_ALLOW_SUPERUSER
+
+By default, superusers cannot be impersonated; this setting allows for that.
+
+Value should be a boolean (True/False), and the default is False.
+
+
     IMPERSONATE_URI_EXCLUSIONS
 
-Set to a list/tuple of url patterns that, if matched, user 
+Set to a list/tuple of url patterns that, if matched, user
 impersonation is not completed. It defaults to:
 
 (r'^admin/',)
 
-If you do not want to use even the default exclusions then set 
+If you do not want to use even the default exclusions then set
 the setting to an emply list/tuple.
 
 
@@ -213,11 +220,11 @@ to a custom page after impersonating a user. Example:
 
     # in settings.py
     IMPERSONATE_REDIRECT_FIELD_NAME = 'next'
-    
+
     # in your view
     <a href="{% url 'impersonate-list' %}?next=/some/url/">switch user</a>
 
-To return always to the current page after impersonating a user, use request.path: 
+To return always to the current page after impersonating a user, use request.path:
 
     <a href="{% url 'impersonate-list' %}?next={{request.path}}">switch user</a>
 
@@ -258,7 +265,7 @@ And you should see::
 
 Copyright & Warranty
 ====================
-All documentation, libraries, and sample code are 
-Copyright 2011 Peter Sanchez <petersanchez@gmail.com>. The library and 
-sample code are made available to you under the terms of the BSD license 
+All documentation, libraries, and sample code are
+Copyright 2011 Peter Sanchez <petersanchez@gmail.com>. The library and
+sample code are made available to you under the terms of the BSD license
 which is contained in the included file, BSD-LICENSE.

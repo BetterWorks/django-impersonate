@@ -101,11 +101,16 @@ def check_allow_for_user(request, end_user):
     '''
     if check_allow_impersonate(request):
         # start user can impersonate
-        # Can impersonate anyone who's not a superuser and who is in your
-        # queryset of 'who i can impersonate'
+        # Can impersonate superusers if IMPERSONATE_ALLOW_SUPERUSER is True
+        # Can impersonate anyone who is in your queryset of 'who i can impersonate'.
+        allow_superusers = getattr(
+            settings,
+            'IMPERSONATE_ALLOW_SUPERUSER',
+            False,
+        )
         upk = end_user.pk
         return (
-            not end_user.is_superuser and
+            (allow_superusers or not end_user.is_superuser) and
             users_impersonable(request).filter(pk=upk).exists()
         )
 
