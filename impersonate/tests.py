@@ -195,26 +195,40 @@ class TestImpersonation(TestCase):
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
-
     def test_successful_impersonation_signals(self):
 
+        # flags used to determine that signals have been sent
+        self.session_begin_fired = False
+        self.session_end_fired = False
+
         def on_session_begin(sender, **kwargs):
+            self.session_begin_fired = True
             self.assertIsNone(sender)
             self.assertIsNotNone(kwargs.pop('request', None))
             self.assertEqual(kwargs.pop('impersonator').username, 'user1')
             self.assertEqual(kwargs.pop('impersonating').username, 'user4')
 
         def on_session_end(sender, **kwargs):
+            self.session_end_fired = True
             self.assertIsNone(sender)
             self.assertIsNotNone(kwargs.pop('request', None))
             self.assertEqual(kwargs.pop('impersonator').username, 'user1')
             self.assertEqual(kwargs.pop('impersonating').username, 'user4')
 
+        self.assertFalse(self.session_begin_fired)
+        self.assertFalse(self.session_end_fired)
         session_begin.connect(on_session_begin)
         session_end.connect(on_session_end)
+
+        # start the impersonation and check that the _begin signal is sent
         response = self._impersonate_helper('user1', 'foobar', 4)
+        self.assertTrue(self.session_begin_fired)
+        self.assertFalse(self.session_end_fired)
         self.assertEqual(self.client.session['_impersonate'].id, 4)
+
+        # now stop the impersonation and check that the _end signal is sent
         self.client.get(reverse('impersonate-stop'))
+        self.assertTrue(self.session_end_fired)
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
         session_begin.disconnect(on_session_begin)
