@@ -168,6 +168,9 @@ this setting is ignored.
 
 By default, superusers cannot be impersonated; this setting allows for that.
 
+**Note:** Even when this is true, only superusers can impersonate other superusers,
+regardless of the value of IMPERSONATE_REQUIRE_SUPERUSER.
+
 Value should be a boolean (True/False), and the default is False.
 
 

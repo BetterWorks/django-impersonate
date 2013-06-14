@@ -110,7 +110,7 @@ def check_allow_for_user(request, end_user):
         )
         upk = end_user.pk
         return (
-            (allow_superusers or not end_user.is_superuser) and
+            ((request.user.is_superuser and allow_superusers) or not end_user.is_superuser) and
             users_impersonable(request).filter(pk=upk).exists()
         )
 
