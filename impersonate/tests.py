@@ -21,12 +21,12 @@
 from django.utils import six
 from django.test import TestCase
 from django.utils import unittest
+from django.dispatch import receiver
 from django.http import HttpResponse
-from django.test.client import Client, RequestFactory
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
+from django.test.client import Client, RequestFactory
 from django.conf.urls.defaults import patterns, url, include
-from django.dispatch import receiver
 from .signals import session_begin, session_end
 
 try:
@@ -222,14 +222,14 @@ class TestImpersonation(TestCase):
 
         # start the impersonation and check that the _begin signal is sent
         response = self._impersonate_helper('user1', 'foobar', 4)
+        self.assertEqual(self.client.session['_impersonate'].id, 4)
         self.assertTrue(self.session_begin_fired)
         self.assertFalse(self.session_end_fired)
-        self.assertEqual(self.client.session['_impersonate'].id, 4)
 
         # now stop the impersonation and check that the _end signal is sent
         self.client.get(reverse('impersonate-stop'))
-        self.assertTrue(self.session_end_fired)
         self.assertEqual(self.client.session.get('_impersonate'), None)
+        self.assertTrue(self.session_end_fired)
         self.client.logout()
         session_begin.disconnect(on_session_begin)
         session_end.disconnect(on_session_end)
