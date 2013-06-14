@@ -127,6 +127,29 @@ You can optionally allow only some non-superuser and non-staff users to imperson
 
 By, optionally, setting the **IMPERSONATE_CUSTOM_USER_QUERYSET** you can control what users can be impersonated. It takes a request object of the user, and returns a QuerySet of users. This is used when searching for users to impersonate, when listing what users to impersonate, and when trying to start impersonation.
 
+**Signals**
+
+If you wish to hook into the impersonation session (for instance, in order to
+audit access), there are two signals that are fired by django-impersonate, at
+the beginning and end of a session:
+
+* session_begin - sent when calling the `impersonate` view
+* session_end - sent when calling the `stop_impersonate` view
+
+Both of these signals send the same arguments:
+
+* sender - this is a Django signal requirement, and is always set to None
+* impersonator - a reference to the User object of the person doing the impersonation
+* impersonating - a reference to the User object of the person being impersonated
+* request - the Django HttpRequest object from which the impersonation was invoked
+
+The request object is included as it contains pertinent information that you may wish
+to audit - such as client IP address, user-agent string, etc.
+
+For an example of how to hook up the signals, see the relevant test - `test_successful_impersonation_signals`.
+
+NB The session_end signal will only be fired if the impersonator explicitly ends
+the session.
 
 Settings
 ========
