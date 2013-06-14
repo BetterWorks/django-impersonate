@@ -6,6 +6,7 @@ Changes
 - Added "impersonator" to request object. (Issue #5)
 - Ditched custom import method for django importlib. (Issue #6)
 - Updated Authors & Changelog
+- Added session_begin and session_end signals. (Issue #8, Pull Request #7)
 
 0.7.0 (2013-03-28)
 
