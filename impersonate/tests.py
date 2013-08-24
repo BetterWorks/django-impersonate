@@ -26,7 +26,7 @@ from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.test.client import Client, RequestFactory
-from django.conf.urls.defaults import patterns, url, include
+from django.conf.urls import patterns, url, include
 from .signals import session_begin, session_end
 
 try:
