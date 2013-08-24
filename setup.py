@@ -13,7 +13,7 @@ if root_dir:
 for dirpath, dirnames, filenames in os.walk(project_name):
     # Ignore dirnames that start with '.'
     for i, dirname in enumerate(dirnames):
-        if dirname.startswith('.'):
+        if dirname.startswith('.') or dirname == '__pycache__':
             del dirnames[i]
     if '__init__.py' in filenames:
         pkg = dirpath.replace(os.path.sep, '.')
