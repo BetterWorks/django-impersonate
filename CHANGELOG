@@ -1,7 +1,7 @@
 Changes
 -------
 
-0.7.1 (not officially released)
+0.8.0 (not officially released)
 
 - Added "impersonator" to request object. (Issue #5)
 - Ditched custom import method for django importlib. (Issue #6)
