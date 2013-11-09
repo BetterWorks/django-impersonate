@@ -28,7 +28,7 @@ def impersonate(request, uid):
     '''
     new_user = get_object_or_404(User, pk=uid)
     if check_allow_for_user(request, new_user):
-        request.session['_impersonate'] = new_user
+        request.session['_impersonate'] = new_user.id
         request.session.modified = True  # Let's make sure...
         # can be used to hook up auditing of the session
         session_begin.send(

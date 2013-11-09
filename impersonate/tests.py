@@ -127,7 +127,7 @@ class TestMiddleware(TestCase):
         request = self.factory.get('/')
         request.user = self.superuser
         request.session = {
-            '_impersonate': self.user
+            '_impersonate': self.user.id
         }
         self.middleware.process_request(request)
 
@@ -190,7 +190,7 @@ class TestImpersonation(TestCase):
 
     def test_successful_impersonation(self):
         response = self._impersonate_helper('user1', 'foobar', 4)
-        self.assertEqual(self.client.session['_impersonate'].id, 4)
+        self.assertEqual(self.client.session['_impersonate'], 4)
         self.client.get(reverse('impersonate-stop'))
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
@@ -213,7 +213,8 @@ class TestImpersonation(TestCase):
             self.assertIsNone(sender)
             self.assertIsNotNone(kwargs.pop('request', None))
             self.assertEqual(kwargs.pop('impersonator').username, 'user1')
-            self.assertEqual(kwargs.pop('impersonating').username, 'user4')
+            impersonating = User.objects.get(id=kwargs.pop('impersonating'))
+            self.assertEqual(impersonating.username, 'user4')
 
         self.assertFalse(self.session_begin_fired)
         self.assertFalse(self.session_end_fired)
@@ -222,7 +223,7 @@ class TestImpersonation(TestCase):
 
         # start the impersonation and check that the _begin signal is sent
         response = self._impersonate_helper('user1', 'foobar', 4)
-        self.assertEqual(self.client.session['_impersonate'].id, 4)
+        self.assertEqual(self.client.session['_impersonate'], 4)
         self.assertTrue(self.session_begin_fired)
         self.assertFalse(self.session_end_fired)
 
@@ -236,7 +237,7 @@ class TestImpersonation(TestCase):
 
     def test_successsful_impersonation_by_staff(self):
         response = self._impersonate_helper('user3', 'foobar', 4)
-        self.assertEqual(self.client.session['_impersonate'].id, 4)
+        self.assertEqual(self.client.session['_impersonate'], 4)
         self.client.get(reverse('impersonate-stop'))
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
@@ -244,8 +245,9 @@ class TestImpersonation(TestCase):
     @override_settings(IMPERSONATE_ALLOW_SUPERUSER=True)
     def test_successful_impersonation_of_superuser(self):
         response = self._impersonate_helper('user1', 'foobar', 2)
-        self.assertEqual(self.client.session.get('_impersonate').id, 2)
-        self.assertTrue(self.client.session.get('_impersonate').is_superuser)
+        self.assertEqual(self.client.session.get('_impersonate'), 2)
+        user = User.objects.get(id=self.client.session.get('_impersonate'))
+        self.assertTrue(user.is_superuser)
         self.client.get(reverse('impersonate-stop'))
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
@@ -269,7 +271,7 @@ class TestImpersonation(TestCase):
 
     def test_unsuccessful_impersonation_restricted_uri(self):
         response = self._impersonate_helper('user1', 'foobar', 4)
-        self.assertEqual(self.client.session['_impersonate'].id, 4)
+        self.assertEqual(self.client.session['_impersonate'], 4)
 
         # Don't allow impersonated users to use impersonate views
         with self.settings(LOGIN_REDIRECT_URL='/test-redirect/'):
@@ -290,7 +292,7 @@ class TestImpersonation(TestCase):
     def test_successful_impersonation_redirect_url(self):
         with self.settings(IMPERSONATE_REDIRECT_URL='/test-redirect/'):
             response = self._impersonate_helper('user1', 'foobar', 4)
-            self.assertEqual(self.client.session['_impersonate'].id, 4)
+            self.assertEqual(self.client.session['_impersonate'], 4)
             self._redirect_check(response, '/test-redirect/')
             self.client.get(reverse('impersonate-stop'))
             self.assertEqual(self.client.session.get('_impersonate'), None)
@@ -298,7 +300,7 @@ class TestImpersonation(TestCase):
 
         with self.settings(LOGIN_REDIRECT_URL='/test-redirect-2/'):
             response = self._impersonate_helper('user1', 'foobar', 4)
-            self.assertEqual(self.client.session['_impersonate'].id, 4)
+            self.assertEqual(self.client.session['_impersonate'], 4)
             self._redirect_check(response, '/test-redirect-2/')
             self.client.get(reverse('impersonate-stop'))
             self.assertEqual(self.client.session.get('_impersonate'), None)
@@ -311,7 +313,7 @@ class TestImpersonation(TestCase):
                 4,
                 {'next': '/test-next/'},
             )
-            self.assertEqual(self.client.session['_impersonate'].id, 4)
+            self.assertEqual(self.client.session['_impersonate'], 4)
             self._redirect_check(response, '/test-next/')
             self.client.get(reverse('impersonate-stop'))
             self.assertEqual(self.client.session.get('_impersonate'), None)
