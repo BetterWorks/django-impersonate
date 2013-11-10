@@ -1,7 +1,13 @@
 Changes
 -------
 
-0.8.0 (not officially released)
+0.8.1 (2013-11-09)
+
+- Store user ID for Django 1.6 serialization support. (Issue #12, Pull Request #11)
+- Updated Authors & Changelog
+- Updated tox config to include Django 1.6 environments
+
+0.8.0 (2013-08-24)
 
 - Added "impersonator" to request object. (Issue #5)
 - Ditched custom import method for django importlib. (Issue #6)
