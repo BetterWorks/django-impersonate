@@ -264,7 +264,7 @@ Array of user model fields used for building searching query. Default value is
     IMPERSONATE_LOOKUP_TYPE
 
 A string that represents SQL lookup type for searching users by query on
-fields above.
+fields above. It is 'icontains' by default.
 
 
 Testing
