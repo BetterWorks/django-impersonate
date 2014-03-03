@@ -258,7 +258,8 @@ To return always to the current page after impersonating a user, use request.pat
     IMPERSONATE_SEARCH_FIELDS
 
 Array of user model fields used for building searching query. Default value is
-[User.USERNAME_FIELD, 'first_name', 'last_name', 'email']
+[User.USERNAME_FIELD, 'first_name', 'last_name', 'email']. If the User model doesn't have
+the USERNAME_FIELD attribute, it falls back to 'username' (< Django 1.5).
 
 
     IMPERSONATE_LOOKUP_TYPE
