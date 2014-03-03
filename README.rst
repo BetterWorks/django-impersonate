@@ -2,7 +2,7 @@
 django-impersonate
 ==================
 :Info: Simple application to allow superusers to "impersonate" other non-superuser accounts.
-:Version: 0.7.0
+:Version: 0.9.0
 :Author: Peter Sanchez (http://www.petersanchez.com)
 
 
@@ -110,8 +110,8 @@ the following in the context:
 * query - The search query that was entered
 
 The view will expect a GET request and look for the 'q' variable being passed.
-If present, it will search the user entries with the value of 'q'. The fields
-searched are:
+If present, it will search the user entries with the value of 'q'. The default
+fields searched are:
 
 User.username, User.first_name, User.last_name, User.email
 
@@ -253,6 +253,19 @@ to a custom page after impersonating a user. Example:
 To return always to the current page after impersonating a user, use request.path:
 
     <a href="{% url 'impersonate-list' %}?next={{request.path}}">switch user</a>
+
+
+    IMPERSONATE_SEARCH_FIELDS
+
+Array of user model fields used for building searching query. Default value is
+[User.USERNAME_FIELD, 'first_name', 'last_name', 'email']. If the User model doesn't have
+the USERNAME_FIELD attribute, it falls back to 'username' (< Django 1.5).
+
+
+    IMPERSONATE_LOOKUP_TYPE
+
+A string that represents SQL lookup type for searching users by query on
+fields above. It is 'icontains' by default.
 
 
 Testing

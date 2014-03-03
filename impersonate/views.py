@@ -1,5 +1,5 @@
+from django.conf import settings
 from django.db.models import Q
-from django.template import RequestContext
 from django.shortcuts import get_object_or_404, redirect, render
 from .decorators import allowed_user_required
 from .helpers import (
@@ -93,12 +93,21 @@ def search_users(request, template):
                               put this inside search form
     '''
     query = request.GET.get('q', '')
-    search_q = Q(username__icontains=query) | \
-               Q(first_name__icontains=query) | \
-               Q(last_name__icontains=query) | \
-               Q(email__icontains=query)
-    users = users_impersonable(request)
 
+    # get username field
+    username_field = getattr(User, 'USERNAME_FIELD', 'username')
+
+    # define search fields and lookup type
+    search_fields = set(getattr(settings, 'IMPERSONATE_SEARCH_FIELDS',
+                            [username_field, 'first_name', 'last_name', 'email']))
+    lookup_type = getattr(settings, 'IMPERSONATE_LOOKUP_TYPE', 'icontains')
+
+    # prepare kwargs
+    search_q = Q()
+    for search_field in search_fields:
+        search_q |= Q(**{'{0}__{1}'.format(search_field, lookup_type): query})
+
+    users = users_impersonable(request)
     users = users.filter(search_q)
     paginator, page, page_number = get_paginator(request, users)
 
