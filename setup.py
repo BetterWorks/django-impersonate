@@ -27,7 +27,7 @@ for dirpath, dirnames, filenames in os.walk(project_name):
 
 setup(
     name='django-impersonate',
-    version=__import__(project_name).__version__,
+    version=__import__(project_name).get_version(),
     package_dir={project_name: project_name},
     packages=packages,
     package_data={project_name: data_files},
@@ -45,6 +45,10 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Environment :: Web Environment',
     ],
 )
