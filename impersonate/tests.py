@@ -123,11 +123,11 @@ class TestMiddleware(TestCase):
         self.factory = RequestFactory()
         self.middleware = ImpersonateMiddleware()
 
-    def test_impersonated_request(self):
+    def _impersonated_request(self, use_id=True):
         request = self.factory.get('/')
         request.user = self.superuser
         request.session = {
-            '_impersonate': self.user.id
+            '_impersonate': self.user.id if use_id else self.user,
         }
         self.middleware.process_request(request)
 
@@ -135,6 +135,15 @@ class TestMiddleware(TestCase):
         self.assertEqual(request.user, self.user)
         self.assertEqual(request.impersonator, self.superuser)
         self.assertTrue(request.user.is_impersonate)
+
+    def test_impersonated_request(self):
+        self._impersonated_request()
+
+    def test_impersonated_request_non_id(self):
+        ''' Test to ensure User objects don't kill the app.
+            See Issue #15
+        '''
+        self._impersonated_request(use_id=False)
 
 
 class TestImpersonation(TestCase):

@@ -99,7 +99,7 @@ def search_users(request, template):
 
     # define search fields and lookup type
     search_fields = set(getattr(settings, 'IMPERSONATE_SEARCH_FIELDS',
-                            [username_field, 'first_name', 'last_name', 'email']))
+                         [username_field, 'first_name', 'last_name', 'email']))
     lookup_type = getattr(settings, 'IMPERSONATE_LOOKUP_TYPE', 'icontains')
 
     # prepare kwargs
