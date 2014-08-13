@@ -1,6 +1,13 @@
 Changes
 -------
 
+0.9.0
+
+- Split search query into terms. (Pull Request #15)
+- Edge case bug addressing different versions of Django in different environments. (Issue #15)
+- Moved LOGIN_URL to function to avoid circular import issues. (Pull Request #14)
+- Customize search fields and query type. (Issue #14, Pull Request #13)
+
 0.8.1 (2013-11-09)
 
 - Store user ID for Django 1.6 serialization support. (Issue #12, Pull Request #11)
