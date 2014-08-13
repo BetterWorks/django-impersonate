@@ -365,6 +365,12 @@ class TestImpersonation(TestCase):
 
         response = self.client.get(
             reverse('impersonate-search'),
+            {'q': '   john   doe'},
+        )
+        self.assertEqual(response.context['users'].count(), 1)
+
+        response = self.client.get(
+            reverse('impersonate-search'),
             {'q': 'noresultsfound'},
         )
         self.assertEqual(response.context['users'].count(), 0)

@@ -104,8 +104,11 @@ def search_users(request, template):
 
     # prepare kwargs
     search_q = Q()
-    for search_field in search_fields:
-        search_q |= Q(**{'{0}__{1}'.format(search_field, lookup_type): query})
+    for term in query.split():
+        sub_q = Q()
+        for search_field in search_fields:
+            sub_q |= Q(**{'{0}__{1}'.format(search_field, lookup_type): term})
+        search_q &= sub_q
 
     users = users_impersonable(request)
     users = users.filter(search_q)
