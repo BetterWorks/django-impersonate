@@ -296,11 +296,6 @@ class TestImpersonation(TestCase):
         response = self._impersonate_helper('user1', 'foobar', 4)
         self.assertEqual(self.client.session['_impersonate'], 4)
 
-        # Don't allow impersonated users to use impersonate views
-        with self.settings(LOGIN_REDIRECT_URL='/test-redirect/'):
-            response = self.client.get(reverse('impersonate-list'))
-            self._redirect_check(response, '/test-redirect/')
-
         # Don't allow impersonated users to use restricted URI's
         with self.settings(IMPERSONATE_URI_EXCLUSIONS=r'^test-view/'):
             response = self.client.get(reverse('impersonate-test'))
