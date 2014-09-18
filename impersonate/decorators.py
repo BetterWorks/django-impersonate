@@ -26,11 +26,6 @@ def allowed_user_required(view_func):
                 urlquote(request.get_full_path()),
             ))
 
-        if getattr(request.user, 'is_impersonate', False):
-            # Do not allow an impersonated session to use the
-            # impersonate views.
-            return redirect(get_redir_path())
-
         if check_allow_impersonate(request):
             # user is allowed to impersonate
             return view_func(request, *args, **kwargs)

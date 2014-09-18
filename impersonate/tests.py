@@ -205,10 +205,13 @@ class TestImpersonation(TestCase):
         self.client.logout()
 
     def test_successful_impersonation_signals(self):
-
         # flags used to determine that signals have been sent
         self.session_begin_fired = False
         self.session_end_fired = False
+
+        def clear_sessions_fired():
+            self.session_begin_fired = False
+            self.session_end_fired = False
 
         def on_session_begin(sender, **kwargs):
             self.session_begin_fired = True
@@ -231,21 +234,32 @@ class TestImpersonation(TestCase):
         session_end.connect(on_session_end)
 
         # start the impersonation and check that the _begin signal is sent
-        response = self._impersonate_helper('user1', 'foobar', 4)
+        self._impersonate_helper('user1', 'foobar', 4)
         self.assertEqual(self.client.session['_impersonate'], 4)
         self.assertTrue(self.session_begin_fired)
         self.assertFalse(self.session_end_fired)
+        clear_sessions_fired()
+
+        # start another impersonation and check that the _end signal is sent to
+        self.client.get(reverse('impersonate-start', args=[4]))
+        self.assertEqual(self.client.session['_impersonate'], 4)
+        self.assertTrue(self.session_begin_fired)
+        self.assertTrue(self.session_end_fired)
+        clear_sessions_fired()
 
         # now stop the impersonation and check that the _end signal is sent
         self.client.get(reverse('impersonate-stop'))
         self.assertEqual(self.client.session.get('_impersonate'), None)
+        self.assertFalse(self.session_begin_fired)
         self.assertTrue(self.session_end_fired)
+        clear_sessions_fired()
+
         self.client.logout()
         session_begin.disconnect(on_session_begin)
         session_end.disconnect(on_session_end)
 
     def test_successsful_impersonation_by_staff(self):
-        response = self._impersonate_helper('user3', 'foobar', 4)
+        self._impersonate_helper('user3', 'foobar', 4)
         self.assertEqual(self.client.session['_impersonate'], 4)
         self.client.get(reverse('impersonate-stop'))
         self.assertEqual(self.client.session.get('_impersonate'), None)
