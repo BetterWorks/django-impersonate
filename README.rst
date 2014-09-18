@@ -2,9 +2,11 @@
 django-impersonate
 ==================
 :Info: Simple application to allow superusers to "impersonate" other non-superuser accounts.
-:Version: 0.9.0
+:Version: 0.9.1
 :Author: Peter Sanchez (http://www.petersanchez.com)
 
+**BACKWARDS COMPATABILITY ISSUES:** This breaks compatability with Peter's original project from 0.9.0 https://bitbucket.org/petersanchez/django-impersonate
+We now pass the impersonating user into the custom allow function, as well as in the custom queryset functionz INSTEAD of the request.
 
 Dependencies
 ============
