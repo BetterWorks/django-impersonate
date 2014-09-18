@@ -58,14 +58,14 @@ def test_view(request):
     return HttpResponse('OK {0}'.format(request.user))
 
 
-def test_allow(request):
+def test_allow(impersonator):
     ''' Used via the IMPERSONATE_CUSTOM_ALLOW setting.
         Simple check for the user to be auth'd and a staff member.
     '''
-    return request.user.is_authenticated() and request.user.is_staff
+    return impersonator.is_authenticated() and impersonator.is_staff
 
 
-def test_allow2(request):
+def test_allow2(impersonator):
     ''' Used via the IMPERSONATE_CUSTOM_ALLOW setting.
         Always return False
     '''
@@ -295,11 +295,6 @@ class TestImpersonation(TestCase):
     def test_unsuccessful_impersonation_restricted_uri(self):
         response = self._impersonate_helper('user1', 'foobar', 4)
         self.assertEqual(self.client.session['_impersonate'], 4)
-
-        # Don't allow impersonated users to use impersonate views
-        with self.settings(LOGIN_REDIRECT_URL='/test-redirect/'):
-            response = self.client.get(reverse('impersonate-list'))
-            self._redirect_check(response, '/test-redirect/')
 
         # Don't allow impersonated users to use restricted URI's
         with self.settings(IMPERSONATE_URI_EXCLUSIONS=r'^test-view/'):

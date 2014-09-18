@@ -1,9 +1,7 @@
-from .decorators import allowed_user_required
 from .helpers import check_allow_for_user
 from .signals import session_begin, session_end
 
 
-@allowed_user_required
 def impersonate(request, new_user):
     ''' Takes in the UID of the user to impersonate.
     View will fetch the User instance and store it

@@ -11,7 +11,7 @@ except ImportError:
 else:
     User = get_user_model()
 
-
+@allowed_user_required
 def impersonate(request, uid):
     new_user = get_object_or_404(User, pk=uid)
     logic.stop_impersonate(request)

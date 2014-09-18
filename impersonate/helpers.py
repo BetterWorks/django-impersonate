@@ -91,7 +91,8 @@ def users_impersonable(request):
         custom_queryset_func = import_func_from_string(
             settings.IMPERSONATE_CUSTOM_USER_QUERYSET
         )
-        return custom_queryset_func(request)
+        impersonator = get_impersonator(request)
+        return custom_queryset_func(impersonator)
     else:
         return User.objects.all()
 
@@ -133,15 +134,17 @@ def check_allow_impersonate(request):
         Uses the IMPERSONATE_CUSTOM_ALLOW function if required, else
         looks at superuser/staff status and IMPERSONATE_REQUIRE_SUPERUSER
     '''
+    impersonator = get_impersonator(request)
+
     if hasattr(settings, 'IMPERSONATE_CUSTOM_ALLOW'):
         custom_allow_func = \
             import_func_from_string(settings.IMPERSONATE_CUSTOM_ALLOW)
 
-        return custom_allow_func(request)
+        return custom_allow_func(impersonator)
     else:
         # default allow checking:
-        if not request.user.is_superuser:
-            if not request.user.is_staff or not check_allow_staff():
+        if not impersonator.is_superuser:
+            if not impersonator.is_staff or not check_allow_staff():
                 return False
 
         return True
@@ -159,3 +162,10 @@ def check_allow_for_uri(uri):
             return False
 
     return True
+
+
+def get_impersonator(request):
+    if request.user.is_impersonate:
+        return request.impersonator
+    else:
+        return request.user
