@@ -1,8 +1,7 @@
+from . import contexts, logic
 from .decorators import allowed_user_required
 from .helpers import get_redir_path
 from django.shortcuts import redirect, render, get_object_or_404
-import contexts
-import logic
 
 try:
     # Django 1.5 check
