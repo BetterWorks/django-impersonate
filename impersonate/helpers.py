@@ -91,7 +91,8 @@ def users_impersonable(request):
         custom_queryset_func = import_func_from_string(
             settings.IMPERSONATE_CUSTOM_USER_QUERYSET
         )
-        return custom_queryset_func(request)
+        impersonator = get_impersonator(request)
+        return custom_queryset_func(impersonator)
     else:
         return User.objects.all()
 
