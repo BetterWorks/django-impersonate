@@ -58,14 +58,14 @@ def test_view(request):
     return HttpResponse('OK {0}'.format(request.user))
 
 
-def test_allow(request):
+def test_allow(impersonator):
     ''' Used via the IMPERSONATE_CUSTOM_ALLOW setting.
         Simple check for the user to be auth'd and a staff member.
     '''
-    return request.user.is_authenticated() and request.user.is_staff
+    return impersonator.is_authenticated() and impersonator.is_staff
 
 
-def test_allow2(request):
+def test_allow2(impersonator):
     ''' Used via the IMPERSONATE_CUSTOM_ALLOW setting.
         Always return False
     '''
