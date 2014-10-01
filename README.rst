@@ -294,9 +294,17 @@ If you're bored and want to test all the supported environments, you'll need tox
 
 And you should see::
 
+    py3.4-django1.7: commands succeeded
+    py3.4-django1.6: commands succeeded
+    py3.4-django1.5: commands succeeded
+    py3.3-django1.7: commands succeeded
+    py3.3-django1.6: commands succeeded
     py3.3-django1.5: commands succeeded
+    py2.7-django1.7: commands succeeded
+    py2.7-django1.6: commands succeeded
     py2.7-django1.5: commands succeeded
     py2.6-django1.5: commands succeeded
+    py2.6-django1.6: commands succeeded
     py2.7-django1.4: commands succeeded
     py2.6-django1.4: commands succeeded
     congratulations :)
@@ -308,3 +316,12 @@ All documentation, libraries, and sample code are
 Copyright 2011 Peter Sanchez <petersanchez@gmail.com>. The library and
 sample code are made available to you under the terms of the BSD license
 which is contained in the included file, BSD-LICENSE.
+
+
+==================
+Commercial Support
+==================
+
+This software, and lots of other software like it, has been built in support of many of
+Netlandish's own projects, and the projects of our clients. We would love to help you 
+on your next project so get in touch by dropping us a note at hello@netlandish.com.

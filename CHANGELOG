@@ -1,12 +1,13 @@
 Changes
 -------
 
-0.9.0
+0.9.0 (2014-09-30)
 
 - Split search query into terms. (Pull Request #15)
 - Edge case bug addressing different versions of Django in different environments. (Issue #15)
 - Moved LOGIN_URL to function to avoid circular import issues. (Pull Request #14)
 - Customize search fields and query type. (Issue #14, Pull Request #13)
+- Django 1.7 compat changes. (Refs Pull Request #16)
 
 0.8.1 (2013-11-09)
 
