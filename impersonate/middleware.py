@@ -1,12 +1,5 @@
-from .helpers import check_allow_for_user, check_allow_for_uri
+from .helpers import check_allow_for_user, check_allow_for_uri, User
 
-try:
-    # Django 1.5 check
-    from django.contrib.auth import get_user_model
-except ImportError:
-    from django.contrib.auth.models import User
-else:
-    User = get_user_model()
 
 class ImpersonateMiddleware(object):
     def process_request(self, request):

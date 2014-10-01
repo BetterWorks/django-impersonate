@@ -4,17 +4,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .decorators import allowed_user_required
 from .helpers import (
     get_redir_path, get_redir_arg, get_paginator, get_redir_field,
-    check_allow_for_user, users_impersonable
+    check_allow_for_user, users_impersonable, User
 )
 from .signals import session_begin, session_end
-
-try:
-    # Django 1.5 check
-    from django.contrib.auth import get_user_model
-except ImportError:
-    from django.contrib.auth.models import User
-else:
-    User = get_user_model()
 
 
 @allowed_user_required
