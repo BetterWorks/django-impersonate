@@ -384,6 +384,55 @@ class TestImpersonation(TestCase):
             self.assertEqual(response.context['users'].count(), 4)
         self.client.logout()
 
+    @override_settings(IMPERSONATE_SEARCH_FIELDS=['first_name', 'last_name'])
+    def test_user_search_custom_fields(self):
+        self.client.login(username='user1', password='foobar')
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'john'},
+        )
+        self.assertEqual(response.context['users'].count(), 2)
+
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'doe'},
+        )
+        self.assertEqual(response.context['users'].count(), 1)
+
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'user'},
+        )
+        self.assertEqual(response.context['users'].count(), 0)
+        self.client.logout()
+
+    @override_settings(IMPERSONATE_LOOKUP_TYPE='exact')
+    def test_user_search_custom_lookup(self):
+        self.client.login(username='user1', password='foobar')
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'John'},
+        )
+        self.assertEqual(response.context['users'].count(), 2)
+
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'Doe'},
+        )
+        self.assertEqual(response.context['users'].count(), 1)
+
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'john'},
+        )
+        self.assertEqual(response.context['users'].count(), 0)
+
+        response = self.client.get(
+            reverse('impersonate-search'),
+            {'q': 'doe'},
+        )
+        self.assertEqual(response.context['users'].count(), 0)
+
     @override_settings(IMPERSONATE_REDIRECT_FIELD_NAME='next')
     def test_redirect_field_name(self):
         self.client.login(username='user1', password='foobar')
