@@ -1,6 +1,10 @@
 Changes
 -------
 
+0.9.1
+
+- Fix unicode issue with redirect variables. (Issue #21)
+
 0.9.0 (2014-09-30)
 
 - Split search query into terms. (Pull Request #15)
