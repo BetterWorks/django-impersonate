@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
     Tests
     Factory creates 4 User accounts.
@@ -445,6 +446,22 @@ class TestImpersonation(TestCase):
             {'next': '/test/'},
         )
         self.assertEqual(response.context['redirect'], '?next=/test/')
+        self.client.logout()
+
+    @override_settings(IMPERSONATE_REDIRECT_FIELD_NAME='next')
+    def test_redirect_field_name_unicode(self):
+        ''' Specific test to account for Issue #21
+        '''
+        self.client.login(username='user1', password='foobar')
+        response = self.client.get(reverse('impersonate-list'))
+        self.assertEqual(response.context['redirect'], '')
+
+        # Add redirect value to query
+        response = self.client.get(
+            reverse('impersonate-list'),
+            {'next': u'/über/'},
+        )
+        self.assertEqual(response.context['redirect'], u'?next=/über/')
         self.client.logout()
 
     @override_settings(IMPERSONATE_CUSTOM_ALLOW='impersonate.tests.test_allow')

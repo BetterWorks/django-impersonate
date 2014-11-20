@@ -84,7 +84,7 @@ def search_users(request, template):
           * redirect_field - hidden input field with redirect argument,
                               put this inside search form
     '''
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', u'')
 
     # get username field
     username_field = getattr(User, 'USERNAME_FIELD', 'username')

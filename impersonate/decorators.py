@@ -20,7 +20,7 @@ def get_login_url():
 def allowed_user_required(view_func):
     def _checkuser(request, *args, **kwargs):
         if not request.user.is_authenticated():
-            return redirect('{0}?{1}={2}'.format(
+            return redirect(u'{0}?{1}={2}'.format(
                 get_login_url(),
                 REDIRECT_FIELD_NAME,
                 urlquote(request.get_full_path()),
