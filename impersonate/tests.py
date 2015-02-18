@@ -47,10 +47,14 @@ else:
     User = get_user_model()
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^test-view/$',
         'impersonate.tests.test_view',
         name='impersonate-test'),
+    url(r'^another-view/$',
+        'impersonate.tests.test_view',
+        name='another-test-view'),
     ('^', include('impersonate.urls')),
 )
 
@@ -167,13 +171,33 @@ class TestImpersonation(TestCase):
                 'password': 'foobar',
             })
 
-    def _impersonate_helper(self, user, passwd,
-                            user_id_to_impersonate, qwargs={}):
+    def _impersonate_helper(
+        self,
+        user,
+        passwd,
+        user_id_to_impersonate,
+        qwargs={},
+        starting_url=None
+    ):
+        '''
+        Trigger impersonate mode for a particular user id, using
+        the specified authenticated user.
+
+        The HTTP_REFERER can be simulated by passing the optional
+        `starting_url` arg.
+        '''
+
         self.client.login(username=user, password=passwd)
+
         url = reverse('impersonate-start', args=[user_id_to_impersonate])
         if qwargs:
             url += '?{0}'.format(urlencode(qwargs))
-        return self.client.get(url)
+
+        args = [url]
+        kwargs = {}
+        if starting_url:
+            kwargs['HTTP_REFERER'] = starting_url
+        return self.client.get(*args, **kwargs)
 
     def _redirect_check(self, response, new_path):
         ''' Needed because assertRedirect fails because it checks
@@ -326,6 +350,32 @@ class TestImpersonation(TestCase):
             self.assertEqual(self.client.session['_impersonate'], 4)
             self._redirect_check(response, '/test-next/')
             self.client.get(reverse('impersonate-stop'))
+            self.assertEqual(self.client.session.get('_impersonate'), None)
+            self.client.logout()
+
+    def test_returned_to_original_path_after_impersonation(self):
+
+        # show with and without querystrings works
+        for starting_url in [
+            reverse('another-test-view'),
+            reverse('another-test-view') + "?test=true&foo=bar",
+        ]:
+            response = self._impersonate_helper(
+                user='user1',
+                passwd='foobar',
+                user_id_to_impersonate=4,
+                starting_url=starting_url
+            )
+            self.assertEqual(self.client.session['_impersonate'], 4)
+            self._redirect_check(response, '/accounts/profile/')
+            response = self.client.get(reverse('impersonate-stop'))
+
+            # Can't use self._redirect_check here because it doesn't
+            # compare querystrings
+            self.assertEqual(
+                "http://testserver" + starting_url,
+                response._headers['location'][1]
+            )
             self.assertEqual(self.client.session.get('_impersonate'), None)
             self.client.logout()
 

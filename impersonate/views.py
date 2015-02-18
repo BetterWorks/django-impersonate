@@ -17,10 +17,19 @@ def impersonate(request, uid):
 
         The middleware will then pick up on it and adjust the
         request object as needed.
+
+        Also store the user's 'starting'/'original' URL so
+        we can return them to it.
     '''
     new_user = get_object_or_404(User, pk=uid)
     if check_allow_for_user(request, new_user):
         request.session['_impersonate'] = new_user.id
+        prev_path = request.META.get('HTTP_REFERER')
+        if prev_path:
+            request.session['_impersonate_prev_path'] = request.build_absolute_uri(
+                prev_path
+            )
+
         request.session.modified = True  # Let's make sure...
         # can be used to hook up auditing of the session
         session_begin.send(
@@ -34,8 +43,11 @@ def impersonate(request, uid):
 
 def stop_impersonate(request):
     ''' Remove the impersonation object from the session
+        and ideally return the user to the original path
+        they were on.
     '''
     impersonating = request.session.pop('_impersonate', None)
+    original_path = request.session.pop('_impersonate_prev_path', None)
     if impersonating is not None:
         request.session.modified = True
         session_end.send(
@@ -44,7 +56,10 @@ def stop_impersonate(request):
             impersonating=impersonating,
             request=request
         )
-    return redirect(get_redir_path(request))
+
+    dest = original_path or get_redir_path(request)
+
+    return redirect(dest)
 
 
 @allowed_user_required

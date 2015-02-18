@@ -77,7 +77,9 @@ as 'impersonate-start'
     /impersonate/stop/
 
 You can reference this URL with reverse() or the {% url %} template tag
-as 'impersonate-stop'
+as 'impersonate-stop'. When you call this URL, you will be redirected to
+the page that you used to start impersonating a user (eg, some search results
+or the user list.)
 
 
 **To list all users you can go to:**
@@ -159,7 +161,7 @@ The following settings are available for django-impersonate:
 
     IMPERSONATE_REDIRECT_URL
 
-This is the URL you want to be redirected to after you have chosen to
+This is the URL you want to be redirected to _after_ you have chosen to
 impersonate another user. If this is not present it will check for
 the LOGIN_REDIRECT_URL setting and fall back to '/' if neither is
 present. Value should be a string containing the redirect path.
@@ -323,5 +325,5 @@ Commercial Support
 ==================
 
 This software, and lots of other software like it, has been built in support of many of
-Netlandish's own projects, and the projects of our clients. We would love to help you 
+Netlandish's own projects, and the projects of our clients. We would love to help you
 on your next project so get in touch by dropping us a note at hello@netlandish.com.
