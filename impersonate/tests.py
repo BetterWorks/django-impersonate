@@ -179,12 +179,11 @@ class TestImpersonation(TestCase):
         qwargs={},
         starting_url=None
     ):
-        '''
-        Trigger impersonate mode for a particular user id, using
-        the specified authenticated user.
+        ''' Trigger impersonate mode for a particular user id, using
+            the specified authenticated user.
 
-        The HTTP_REFERER can be simulated by passing the optional
-        `starting_url` arg.
+            The HTTP_REFERER can be simulated by passing the optional
+            `starting_url` arg.
         '''
 
         self.client.login(username=user, password=passwd)

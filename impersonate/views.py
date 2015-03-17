@@ -26,9 +26,8 @@ def impersonate(request, uid):
         request.session['_impersonate'] = new_user.id
         prev_path = request.META.get('HTTP_REFERER')
         if prev_path:
-            request.session['_impersonate_prev_path'] = request.build_absolute_uri(
-                prev_path
-            )
+            request.session['_impersonate_prev_path'] = \
+                                request.build_absolute_uri(prev_path)
 
         request.session.modified = True  # Let's make sure...
         # can be used to hook up auditing of the session
@@ -58,7 +57,6 @@ def stop_impersonate(request):
         )
 
     dest = original_path or get_redir_path(request)
-
     return redirect(dest)
 
 
