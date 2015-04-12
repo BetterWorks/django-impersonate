@@ -1,7 +1,6 @@
 import re
 from django.conf import settings
 from django.utils.safestring import mark_safe
-from django.utils.importlib import import_module
 from django.core.paginator import Paginator, EmptyPage
 
 try:
@@ -11,6 +10,11 @@ except ImportError:
     from django.contrib.auth.models import User
 else:
     User = get_user_model()
+
+try:
+    from importlib import import_module  # Python 2.7
+except ImportError:
+    from django.utils.importlib import import_module
 
 
 def get_redir_path(request=None):
