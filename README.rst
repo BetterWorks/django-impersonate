@@ -2,7 +2,7 @@
 django-impersonate
 ==================
 :Info: Simple application to allow superusers to "impersonate" other non-superuser accounts.
-:Version: 0.9.0
+:Version: 0.9.1
 :Author: Peter Sanchez (http://www.petersanchez.com)
 
 
@@ -296,12 +296,15 @@ If you're bored and want to test all the supported environments, you'll need tox
 
 And you should see::
 
+    py3.4-django1.8: commands succeeded
     py3.4-django1.7: commands succeeded
     py3.4-django1.6: commands succeeded
     py3.4-django1.5: commands succeeded
+    py3.3-django1.8: commands succeeded
     py3.3-django1.7: commands succeeded
     py3.3-django1.6: commands succeeded
     py3.3-django1.5: commands succeeded
+    py2.7-django1.8: commands succeeded
     py2.7-django1.7: commands succeeded
     py2.7-django1.6: commands succeeded
     py2.7-django1.5: commands succeeded

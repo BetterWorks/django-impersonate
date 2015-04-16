@@ -1,7 +1,7 @@
 Changes
 -------
 
-0.9.1
+0.9.1 (2015-04-16)
 
 - Fix unicode issue with redirect variables. (Issue #21)
 - Add redirect to previous impersonation screen. (Issue #17, Pull Request #17)
