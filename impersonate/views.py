@@ -15,7 +15,13 @@ else:
 
 @allowed_user_required
 def impersonate(request, uid):
-    new_user = get_object_or_404(User, pk=uid)
+    uid = str(uid).strip()
+    if uid.isdigit():
+        new_user = get_object_or_404(User, pk=uid)
+    elif '@' in uid:
+        new_user = get_object_or_404(User, email=uid)
+    else:
+        new_user = get_object_or_404(User, username=uid)
     logic.stop_impersonate(request)
     logic.impersonate(request, new_user)
     return redirect(get_redir_path(request))
