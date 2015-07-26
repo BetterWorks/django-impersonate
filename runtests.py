@@ -1,6 +1,8 @@
 import sys
-from django.conf import settings
 
+import django
+from django.conf import settings
+from django.test.utils import get_runner
 
 APP_NAME = 'impersonate'
 
@@ -27,7 +29,8 @@ settings.configure(
     ),
 )
 
-from django.test.utils import get_runner
+django.setup()
+
 TestRunner = get_runner(settings)
 test_runner = TestRunner()
 failures = test_runner.run_tests([APP_NAME])

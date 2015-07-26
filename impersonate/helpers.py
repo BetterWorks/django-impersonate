@@ -1,8 +1,9 @@
 import re
+
 from django.conf import settings
-from django.utils.safestring import mark_safe
+from django.core.paginator import EmptyPage, Paginator
 from django.utils.importlib import import_module
-from django.core.paginator import Paginator, EmptyPage
+from django.utils.safestring import mark_safe
 
 try:
     # Django 1.5 check

@@ -1,7 +1,8 @@
+from django.shortcuts import get_object_or_404, redirect, render
+
 from . import contexts, logic
 from .decorators import allowed_user_required
 from .helpers import get_redir_path
-from django.shortcuts import redirect, render, get_object_or_404
 
 try:
     # Django 1.5 check
@@ -10,6 +11,7 @@ except ImportError:
     from django.contrib.auth.models import User
 else:
     User = get_user_model()
+
 
 @allowed_user_required
 def impersonate(request, uid):

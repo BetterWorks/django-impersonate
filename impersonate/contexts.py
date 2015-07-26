@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db.models import Q
-from .helpers import (
-    get_redir_arg, get_paginator, get_redir_field, users_impersonable
-)
+
+from .helpers import (get_paginator, get_redir_arg, get_redir_field,
+                      users_impersonable)
 
 try:
     # Django 1.5 check
@@ -54,7 +54,7 @@ def get_search_template_context(request, query):
 
     # define search fields and lookup type
     search_fields = set(getattr(settings, 'IMPERSONATE_SEARCH_FIELDS',
-                         [username_field, 'first_name', 'last_name', 'email']))
+                        [username_field, 'first_name', 'last_name', 'email']))
     lookup_type = getattr(settings, 'IMPERSONATE_LOOKUP_TYPE', 'icontains')
 
     # prepare kwargs

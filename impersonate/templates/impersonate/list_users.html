@@ -1,25 +1,31 @@
 {% load url from future %}
 <html>
 <head>
-<title>Django Impersonate User List</title>
+  <title>Django Impersonate User List</title>
 </head>
 <body>
-<h1>User List - Page {{ page_number }}</h1>
-{% if page.object_list %}
-  <ul>
+  <h1>User List - Page {{ page_number }}</h1>
+  {% if page.object_list %}
+  <table>
     {% for user in page.object_list %}
-      <li><a href="{% url 'impersonate-start' user.id %}{{redirect}}">{{ user }}</a> - Impersonate</li>
+    <tr>
+      <td>
+        <a href="{% url 'impersonate-start' user.id %}{{ redirect }}">{{ user.email }}</a>
+      </td>
+      <td>{{ user.first_name }} {{ user.last_name }}</td>
+    </tr>
     {% endfor %}
-  </ul>
-{% endif %}
+  </table>
+  {% endif %}
 
 {% if page.has_previous %}
-<a href="?page={{ page.previous_page_number }}">Previous Page</a> &nbsp; 
+  <a href="?page={{ page.previous_page_number }}">Previous Page</a>
+  &nbsp;
 {% endif %}
 
 {% if page.has_next %}
-<a href="?page={{ page.next_page_number }}">Next Page</a> &nbsp; 
+  <a href="?page={{ page.next_page_number }}">Next Page</a>
+  &nbsp;
 {% endif %}
-
 </body>
 </html>

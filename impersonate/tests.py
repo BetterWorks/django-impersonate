@@ -18,15 +18,14 @@
         is_superuser = False
         is_staff = False
 '''
-from django.utils import six
-from django.test import TestCase
-from django.utils import unittest
-from django.dispatch import receiver
-from django.http import HttpResponse
+from django.conf.urls import include, patterns, url
 from django.core.urlresolvers import reverse
-from django.test.utils import override_settings
+from django.http import HttpResponse
+from django.test import TestCase
 from django.test.client import Client, RequestFactory
-from django.conf.urls import patterns, url, include
+from django.test.utils import override_settings
+from django.utils import six
+
 from .signals import session_begin, session_end
 
 try:
@@ -46,7 +45,8 @@ else:
     User = get_user_model()
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^test-view/$',
         'impersonate.tests.test_view',
         name='impersonate-test'),
@@ -188,17 +188,17 @@ class TestImpersonation(TestCase):
         self.assertEqual(User.objects.count(), 4)
 
     def test_dont_impersonate_superuser(self):
-        response = self._impersonate_helper('user1', 'foobar', 2)
+        self._impersonate_helper('user1', 'foobar', 2)
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
         # Try again with normal staff user
-        response = self._impersonate_helper('user3', 'foobar', 2)
+        self._impersonate_helper('user3', 'foobar', 2)
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
     def test_successful_impersonation(self):
-        response = self._impersonate_helper('user1', 'foobar', 4)
+        self._impersonate_helper('user1', 'foobar', 4)
         self.assertEqual(self.client.session['_impersonate'], 4)
         self.client.get(reverse('impersonate-stop'))
         self.assertEqual(self.client.session.get('_impersonate'), None)
@@ -267,7 +267,7 @@ class TestImpersonation(TestCase):
 
     @override_settings(IMPERSONATE_ALLOW_SUPERUSER=True)
     def test_successful_impersonation_of_superuser(self):
-        response = self._impersonate_helper('user1', 'foobar', 2)
+        self._impersonate_helper('user1', 'foobar', 2)
         self.assertEqual(self.client.session.get('_impersonate'), 2)
         user = User.objects.get(id=self.client.session.get('_impersonate'))
         self.assertTrue(user.is_superuser)
@@ -277,18 +277,18 @@ class TestImpersonation(TestCase):
 
     @override_settings(IMPERSONATE_REQUIRE_SUPERUSER=True)
     def test_unsuccessful_impersonation_by_staff(self):
-        response = self._impersonate_helper('user3', 'foobar', 4)
+        self._impersonate_helper('user3', 'foobar', 4)
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
     @override_settings(IMPERSONATE_ALLOW_SUPERUSER=False)
     def test_unsuccessful_impersonation_of_superuser(self):
-        response = self._impersonate_helper('user1', 'foobar', 2)
+        self._impersonate_helper('user1', 'foobar', 2)
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
     def test_unsuccessful_impersonation(self):
-        response = self._impersonate_helper('user4', 'foobar', 3)
+        self._impersonate_helper('user4', 'foobar', 3)
         self.assertEqual(self.client.session.get('_impersonate'), None)
         self.client.logout()
 
@@ -299,7 +299,7 @@ class TestImpersonation(TestCase):
         # Don't allow impersonated users to use restricted URI's
         with self.settings(IMPERSONATE_URI_EXCLUSIONS=r'^test-view/'):
             response = self.client.get(reverse('impersonate-test'))
-            self.assertEqual(('user1' in str(response.content)), True) # !user4
+            self.assertEqual(('user1' in str(response.content)), True)  # !user4
 
         self.client.logout()
 
@@ -421,7 +421,7 @@ class TestImpersonation(TestCase):
         with self.settings(
                 IMPERSONATE_CUSTOM_ALLOW='impersonate.tests.test_allow2'):
             response = self.client.get(reverse('impersonate-test'))
-            self.assertEqual(('user1' in str(response.content)), True) # !user4
+            self.assertEqual(('user1' in str(response.content)), True)  # !user4
 
     @override_settings(
         IMPERSONATE_CUSTOM_USER_QUERYSET='impersonate.tests.test_qs')

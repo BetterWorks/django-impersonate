@@ -1,4 +1,4 @@
-from .helpers import check_allow_for_user, check_allow_for_uri
+from .helpers import check_allow_for_uri, check_allow_for_user
 
 try:
     # Django 1.5 check
@@ -7,6 +7,7 @@ except ImportError:
     from django.contrib.auth.models import User
 else:
     User = get_user_model()
+
 
 class ImpersonateMiddleware(object):
     def process_request(self, request):

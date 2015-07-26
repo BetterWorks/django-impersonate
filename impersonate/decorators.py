@@ -1,9 +1,10 @@
 import django
 from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.shortcuts import redirect
 from django.utils.http import urlquote
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from .helpers import get_redir_path, check_allow_impersonate
+
+from .helpers import check_allow_impersonate, get_redir_path
 
 
 def get_login_url():
