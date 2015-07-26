@@ -7,6 +7,17 @@
   <h1>
     Search Users {% if query %}- Page {{ page_number }}{% endif %}
   </h1>
+  <h2>
+    {% if query and page.has_previous %}
+    <a href="?page={{ page.previous_page_number }}&q={{ query|urlencode }}">Previous Page</a>
+    &nbsp;
+    {% endif %}
+
+    {% if query and page.has_next %}
+    <a href="?page={{ page.next_page_number }}&q={{ query|urlencode }}">Next Page</a>
+    &nbsp;
+    {% endif %}
+  </h2>
 
   <form action="{% url 'impersonate-search' %}" method="GET">
     Enter Search Query:
@@ -28,16 +39,6 @@
   </li>
   {% endfor %}
 </table>
-{% endif %}
-
-{% if query and page.has_previous %}
-<a href="?page={{ page.previous_page_number }}&q={{ query|urlencode }}">Previous Page</a>
-&nbsp;
-{% endif %}
-
-{% if query and page.has_next %}
-<a href="?page={{ page.next_page_number }}&q={{ query|urlencode }}">Next Page</a>
-&nbsp;
 {% endif %}
 </body>
 </html>

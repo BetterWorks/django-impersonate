@@ -5,6 +5,20 @@
 </head>
 <body>
   <h1>User List - Page {{ page_number }}</h1>
+  <h2>
+    {% if page.has_previous %}
+      <a href="?page={{ page.previous_page_number }}">Previous Page</a>
+      &nbsp;
+    {% endif %}
+
+    {% if page.has_next %}
+      <a href="?page={{ page.next_page_number }}">Next Page</a>
+      &nbsp;
+    {% endif %}
+
+    <a href="{% url 'impersonate-search' %}">Search</a>
+  </h2>
+
   {% if page.object_list %}
   <table>
     {% for user in page.object_list %}
@@ -17,15 +31,5 @@
     {% endfor %}
   </table>
   {% endif %}
-
-{% if page.has_previous %}
-  <a href="?page={{ page.previous_page_number }}">Previous Page</a>
-  &nbsp;
-{% endif %}
-
-{% if page.has_next %}
-  <a href="?page={{ page.next_page_number }}">Next Page</a>
-  &nbsp;
-{% endif %}
 </body>
 </html>
