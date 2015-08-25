@@ -352,12 +352,13 @@ class TestImpersonation(TestCase):
             self.assertEqual(self.client.session.get('_impersonate'), None)
             self.client.logout()
 
+    @override_settings(IMPERSONATE_USE_HTTP_REFERER=True)
     def test_returned_to_original_path_after_impersonation(self):
 
         # show with and without querystrings works
         for starting_url in [
             reverse('another-test-view'),
-            reverse('another-test-view') + "?test=true&foo=bar",
+            reverse('another-test-view') + '?test=true&foo=bar',
         ]:
             response = self._impersonate_helper(
                 user='user1',
@@ -372,11 +373,37 @@ class TestImpersonation(TestCase):
             # Can't use self._redirect_check here because it doesn't
             # compare querystrings
             self.assertEqual(
-                "http://testserver" + starting_url,
+                'http://testserver{0}'.format(starting_url),
                 response._headers['location'][1]
             )
             self.assertEqual(self.client.session.get('_impersonate'), None)
             self.client.logout()
+
+    def test_successful_impersonation_end_redirect_url(self):
+        for url_path, use_refer in (
+            (reverse('another-test-view'), True),
+            (reverse('another-test-view'), False),
+        ):
+            with self.settings(
+                IMPERSONATE_REDIRECT_URL='/test-redirect/',
+                IMPERSONATE_USE_HTTP_REFERER=use_refer,
+            ):
+                response = self._impersonate_helper(
+                    'user1',
+                    'foobar',
+                    4,
+                    starting_url=url_path,
+                )
+                self.assertEqual(self.client.session['_impersonate'], 4)
+                self._redirect_check(response, '/test-redirect/')
+                response = self.client.get(reverse('impersonate-stop'))
+                use_url_path = url_path if use_refer else '/test-redirect/'
+                self.assertEqual(
+                    'http://testserver{0}'.format(use_url_path),
+                    response._headers['location'][1]
+                )
+                self.assertEqual(self.client.session.get('_impersonate'), None)
+                self.client.logout()
 
     def test_user_listing_and_pagination(self):
         self.client.login(username='user1', password='foobar')
