@@ -13,6 +13,11 @@ except ImportError:
 else:
     User = get_user_model()
 
+try:
+    from importlib import import_module  # Python 2.7
+except ImportError:
+    from django.utils.importlib import import_module
+
 
 def get_redir_path(request=None):
     nextval = None
@@ -26,7 +31,7 @@ def get_redir_path(request=None):
     return nextval or getattr(
         settings,
         'IMPERSONATE_REDIRECT_URL',
-        getattr(settings, 'LOGIN_REDIRECT_URL', '/'),
+        getattr(settings, 'LOGIN_REDIRECT_URL', u'/'),
     )
 
 
@@ -39,8 +44,8 @@ def get_redir_arg(request):
     if redirect_field_name:
         nextval = request.GET.get(redirect_field_name, None)
         if nextval:
-            return '?{0}={1}'.format(redirect_field_name, nextval)
-    return ''
+            return u'?{0}={1}'.format(redirect_field_name, nextval)
+    return u''
 
 
 def get_redir_field(request):
@@ -53,12 +58,12 @@ def get_redir_field(request):
         nextval = request.GET.get(redirect_field_name, None)
         if nextval:
             return mark_safe(
-                '<input type="hidden" name="{0}" value="{1}"/>'.format(
+                u'<input type="hidden" name="{0}" value="{1}"/>'.format(
                     redirect_field_name,
                     nextval,
                 )
             )
-    return ''
+    return u''
 
 
 def get_paginator(request, qs):

@@ -1,15 +1,8 @@
-from .helpers import check_allow_for_uri, check_allow_for_user
-
-try:
-    # Django 1.5 check
-    from django.contrib.auth import get_user_model
-except ImportError:
-    from django.contrib.auth.models import User
-else:
-    User = get_user_model()
+from .helpers import User, check_allow_for_uri, check_allow_for_user
 
 
 class ImpersonateMiddleware(object):
+
     def process_request(self, request):
         request.user.is_impersonate = False
         request.impersonator = None
@@ -22,7 +15,7 @@ class ImpersonateMiddleware(object):
                 new_user_id = new_user_id.id
 
             try:
-                new_user = User.objects.get(id=new_user_id)
+                new_user = User.objects.get(pk=new_user_id)
             except User.DoesNotExist:
                 return
 

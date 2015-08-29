@@ -29,7 +29,11 @@ settings.configure(
     ),
 )
 
-django.setup()
+
+try:
+    django.setup()
+except AttributeError:
+    pass
 
 TestRunner = get_runner(settings)
 test_runner = TestRunner()

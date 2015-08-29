@@ -2,7 +2,7 @@
 django-impersonate
 ==================
 :Info: Simple application to allow superusers to "impersonate" other non-superuser accounts.
-:Version: 0.9.1
+:Version: 0.9.2
 :Author: Peter Sanchez (http://www.petersanchez.com)
 
 **BACKWARDS COMPATABILITY ISSUES:** This breaks compatability with Peter's original project from 0.9.0 https://bitbucket.org/petersanchez/django-impersonate
@@ -15,7 +15,10 @@ Dependencies
 * Python 3.3+ is supported (Django 1.5+ required for Python 3.3+)
 * It depends on your project using the django.contrib.session framework.
 
-**NOTE:** If you need to use this with Django older than 1.4, please use version django-impersonate == 0.5.3
+**NOTE:**
+
+* **Version 0.9.2 partially reverts work completed in version 0.9.1.** This is because work done to address a request in `Issue #17 <https://bitbucket.org/petersanchez/django-impersonate/issues/17/remember-where-to-return-to-after>`_ broke default behavior for all previous versions. `Issue #24 <https://bitbucket.org/petersanchez/django-impersonate/issues/24/impersonate_redirect_url-no-longer-works>`_ was opened and the fix was released in 0.9.2 to address it. Please see the new IMPERSONATE_USE_HTTP_REFERER setting.
+* If you need to use this with Django older than 1.4, please use version django-impersonate == 0.5.3
 
 
 Installation
@@ -79,7 +82,9 @@ as 'impersonate-start'
     /impersonate/stop/
 
 You can reference this URL with reverse() or the {% url %} template tag
-as 'impersonate-stop'
+as 'impersonate-stop'. When you call this URL, you will be redirected to
+the page that you used to start impersonating a user (eg, some search results
+or the user list.)
 
 
 **To list all users you can go to:**
@@ -161,10 +166,22 @@ The following settings are available for django-impersonate:
 
     IMPERSONATE_REDIRECT_URL
 
-This is the URL you want to be redirected to after you have chosen to
+This is the URL you want to be redirected to _after_ you have chosen to
 impersonate another user. If this is not present it will check for
 the LOGIN_REDIRECT_URL setting and fall back to '/' if neither is
 present. Value should be a string containing the redirect path.
+
+
+    IMPERSONATE_USE_HTTP_REFERER
+
+If this is set to True, then the app will attempt to be redirect you to
+the URL you were at when the impersonation began once you have _stopped_
+the impersonation. For example, if you were at the url '/foo/bar/' when
+you began impersonating a user, once you end the impersonation, you will
+be redirected back to '/foo/bar/' instead of the value in
+IMPERSONATE_REDIRECT_URL.
+
+Value should be a boolean (True/False), defaults to False
 
 
     IMPERSONATE_PAGINATE_COUNT
@@ -296,9 +313,20 @@ If you're bored and want to test all the supported environments, you'll need tox
 
 And you should see::
 
+    py3.4-django1.8: commands succeeded
+    py3.4-django1.7: commands succeeded
+    py3.4-django1.6: commands succeeded
+    py3.4-django1.5: commands succeeded
+    py3.3-django1.8: commands succeeded
+    py3.3-django1.7: commands succeeded
+    py3.3-django1.6: commands succeeded
     py3.3-django1.5: commands succeeded
+    py2.7-django1.8: commands succeeded
+    py2.7-django1.7: commands succeeded
+    py2.7-django1.6: commands succeeded
     py2.7-django1.5: commands succeeded
     py2.6-django1.5: commands succeeded
+    py2.6-django1.6: commands succeeded
     py2.7-django1.4: commands succeeded
     py2.6-django1.4: commands succeeded
     congratulations :)
@@ -310,3 +338,12 @@ All documentation, libraries, and sample code are
 Copyright 2011 Peter Sanchez <petersanchez@gmail.com>. The library and
 sample code are made available to you under the terms of the BSD license
 which is contained in the included file, BSD-LICENSE.
+
+
+==================
+Commercial Support
+==================
+
+This software, and lots of other software like it, has been built in support of many of
+Netlandish's own projects, and the projects of our clients. We would love to help you
+on your next project so get in touch by dropping us a note at hello@netlandish.com.
