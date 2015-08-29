@@ -23,8 +23,6 @@ def impersonate(request, new_user):
 
 
 def stop_impersonate(request):
-    ''' Remove the impersonation object from the session
-    '''
     impersonating = request.session.pop('_impersonate', None)
     original_path = request.session.pop('_impersonate_prev_path', None)
     use_refer = getattr(settings, 'IMPERSONATE_USE_HTTP_REFERER', False)
