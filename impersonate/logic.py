@@ -23,13 +23,14 @@ def impersonate(request, new_user):
 
 
 def stop_impersonate(request):
-    impersonating = request.session.pop('_impersonate', None)
-    original_path = request.session.pop('_impersonate_prev_path', None)
-    use_refer = getattr(settings, 'IMPERSONATE_USE_HTTP_REFERER', False)
-    if impersonating is not None:
+    if '_impersonate' in request.session:
+        # modify request.user before popping _impersonate to trigger
+        # apply_impersonate with the correct state
         request.session.modified = True
         request.user.is_impersonate = False
         request.user = request.impersonator
+
+        impersonating = request.session.pop('_impersonate', None)
 
         session_end.send(
             sender=None,
@@ -37,6 +38,9 @@ def stop_impersonate(request):
             impersonating=impersonating,
             request=request
         )
+
+    original_path = request.session.pop('_impersonate_prev_path', None)
+    use_refer = getattr(settings, 'IMPERSONATE_USE_HTTP_REFERER', False)
     dest = original_path \
         if original_path and use_refer else get_redir_path(request)
     return dest
