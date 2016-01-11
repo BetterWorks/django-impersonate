@@ -2,7 +2,6 @@ import re
 
 from django.conf import settings
 from django.core.paginator import EmptyPage, Paginator
-from django.utils.importlib import import_module
 from django.utils.safestring import mark_safe
 
 try:
