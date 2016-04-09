@@ -1,4 +1,5 @@
-from django.utils.functional import empty, SimpleLazyObject
+from django.utils.functional import SimpleLazyObject, empty
+
 from .helpers import User, check_allow_for_uri, check_allow_for_user
 
 
