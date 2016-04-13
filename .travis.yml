@@ -1,0 +1,19 @@
+sudo: false
+language: python
+
+python:
+    - "2.7"
+    - "3.4"
+
+env:
+    - TOXENV=django19
+
+matrix:
+    include:
+        - python: "2.7"
+          env: TOXENV=flake8
+
+install:
+    - "pip install tox"
+
+script: "tox -e $TOXENV"
