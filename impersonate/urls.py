@@ -1,19 +1,10 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'impersonate.views',
-    url(r'^stop/$',
-        'stop_impersonate',
-        name='impersonate-stop'),
-    url(r'^list/$',
-        'list_users',
-        {'template': 'impersonate/list_users.html'},
-        name='impersonate-list'),
-    url(r'^search/$',
-        'search_users',
-        {'template': 'impersonate/search_users.html'},
-        name='impersonate-search'),
-    url(r'^(?P<uid>.+)/$',
-        'impersonate',
-        name='impersonate-start'),
-)
+from . import views
+
+urlpatterns = [
+    url(r'^stop/$', views.stop_impersonate, name='impersonate-stop'),
+    url(r'^list/$', views.list_users, name='impersonate-list'),
+    url(r'^search/$', views.search_users, name='impersonate-search'),
+    url(r'^(?P<uid>.+)/$', views.impersonate, name='impersonate-start'),
+]

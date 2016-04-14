@@ -381,7 +381,7 @@ class TestImpersonation(TestCase):
             # Can't use self._redirect_check here because it doesn't
             # compare querystrings
             self.assertEqual(
-                'http://testserver{0}'.format(starting_url),
+                'http://testserver{}'.format(starting_url),
                 response._headers['location'][1]
             )
             self.assertEqual(self.client.session.get('_impersonate'), None)
@@ -405,11 +405,11 @@ class TestImpersonation(TestCase):
                 self.assertEqual(self.client.session['_impersonate'], 4)
                 self._redirect_check(response, '/test-redirect/')
                 response = self.client.get(reverse('impersonate-stop'))
-                use_url_path = url_path if use_refer else '/test-redirect/'
-                self.assertEqual(
-                    'http://testserver{0}'.format(use_url_path),
-                    response._headers['location'][1]
+                use_url_path = (
+                    'http://testserver{}'.format(url_path)
+                    if use_refer else '/test-redirect/'
                 )
+                self.assertEqual(use_url_path, response._headers['location'][1])
                 self.assertEqual(self.client.session.get('_impersonate'), None)
                 self.client.logout()
 

@@ -39,13 +39,13 @@ def stop_impersonate(request):
 
 
 @allowed_user_required
-def list_users(request, template):
+def list_users(request):
     list_context = contexts.get_list_template_context(request)
-    return render(request, template, list_context)
+    return render(request, 'impersonate/list_users.html', list_context)
 
 
 @allowed_user_required
-def search_users(request, template):
+def search_users(request):
     ''' Simple search through the users.
         Will add 7 items to the context.
           * users - All users that match the query passed.
@@ -61,4 +61,4 @@ def search_users(request, template):
     search_context = contexts.get_search_template_context(
         request, search_query)
 
-    return render(request, template, search_context)
+    return render(request, 'impersonate/search_users.html', search_context)
