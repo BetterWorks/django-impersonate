@@ -19,7 +19,7 @@
         is_superuser = False
         is_staff = False
 '''
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, url
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.test import TestCase
@@ -45,21 +45,29 @@ except ImportError:
 else:
     User = get_user_model()
 
-
-urlpatterns = patterns(
-    '',
-    url(r'^test-view/$',
-        'impersonate.tests.test_view',
-        name='impersonate-test'),
-    url(r'^another-view/$',
-        'impersonate.tests.test_view',
-        name='another-test-view'),
-    ('^', include('impersonate.urls')),
-)
+try:
+    # Django <=1.9
+    from django.conf.urls import patterns
+except ImportError:
+    patterns = None
 
 
 def test_view(request):
     return HttpResponse('OK {0}'.format(request.user))
+
+
+urlpatterns = [
+    url(r'^test-view/$',
+        test_view,
+        name='impersonate-test'),
+    url(r'^another-view/$',
+        test_view,
+        name='another-test-view'),
+    ('^', include('impersonate.urls')),
+]
+
+if patterns is not None:
+    urlpatterns = patterns('', *urlpatterns)
 
 
 def test_allow(impersonator):
