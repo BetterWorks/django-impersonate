@@ -63,7 +63,7 @@ urlpatterns = [
     url(r'^another-view/$',
         test_view,
         name='another-test-view'),
-    ('^', include('impersonate.urls')),
+    url('^', include('impersonate.urls')),
 ]
 
 if patterns is not None:
