@@ -19,6 +19,9 @@
         is_superuser = False
         is_staff = False
 '''
+from distutils.version import LooseVersion
+
+from django import get_version
 from django.conf.urls import include, url
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
@@ -28,6 +31,8 @@ from django.test.utils import override_settings
 from django.utils import six
 
 from .signals import session_begin, session_end
+
+django_ver = get_version()
 
 try:
     # Python 3
@@ -413,11 +418,23 @@ class TestImpersonation(TestCase):
                 self.assertEqual(self.client.session['_impersonate'], 4)
                 self._redirect_check(response, '/test-redirect/')
                 response = self.client.get(reverse('impersonate-stop'))
-                use_url_path = url_path if use_refer else '/test-redirect/'
-                self.assertEqual(
-                    'http://testserver{0}'.format(use_url_path),
-                    response._headers['location'][1]
-                )
+                if LooseVersion(django_ver) < LooseVersion('1.9'):
+                    use_url_path = url_path if use_refer else '/test-redirect/'
+                    self.assertEqual(
+                        'http://testserver{0}'.format(use_url_path),
+                        response._headers['location'][1]
+                    )
+                else:
+                    if use_refer:
+                        use_url_path = 'http://testserver{0}'.format(url_path)
+                    else:
+                        use_url_path = '/test-redirect/'
+
+                    self.assertEqual(
+                        use_url_path,
+                        response._headers['location'][1]
+                    )
+
                 self.assertEqual(self.client.session.get('_impersonate'), None)
                 self.client.logout()
 
