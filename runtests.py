@@ -1,6 +1,7 @@
 import sys
 
 import django
+import os
 from django.conf import settings
 from django.test.utils import get_runner
 
@@ -27,6 +28,23 @@ settings.configure(
         'django.contrib.admin',
         APP_NAME,
     ),
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [
+                os.path.join(APP_NAME, 'templates'),
+            ],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                ],
+            },
+        },
+    ]
 )
 
 
