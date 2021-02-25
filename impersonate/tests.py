@@ -74,7 +74,7 @@ def test_allow(impersonator):
     ''' Used via the IMPERSONATE_CUSTOM_ALLOW setting.
         Simple check for the user to be auth'd and a staff member.
     '''
-    return impersonator.is_authenticated() and impersonator.is_staff
+    return impersonator.is_authenticated and impersonator.is_staff
 
 
 def test_allow2(impersonator):

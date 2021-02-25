@@ -1,4 +1,4 @@
-VERSION = (0, 9, 2, 'beta', 4)
+VERSION = (0, 9, 2, 'beta', 5)
 
 
 # taken from django-registration
