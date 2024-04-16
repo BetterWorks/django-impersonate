@@ -1,11 +1,7 @@
 from django.dispatch import Signal
 
 # signal sent when an impersonation session begins
-session_begin = Signal(
-    providing_args=['impersonator', 'impersonating', 'request']
-)
+session_begin = Signal()
 
 # signal sent when an impersonation session ends
-session_end = Signal(
-    providing_args=['impersonator', 'impersonating', 'request']
-)
+session_end = Signal()
