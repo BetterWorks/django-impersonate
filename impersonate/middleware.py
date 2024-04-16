@@ -7,7 +7,7 @@ def apply_impersonate(request):
     request.user.is_impersonate = False
     request.impersonator = None
 
-    if request.user.is_authenticated() and \
+    if request.user.is_authenticated and \
        '_impersonate' in request.session:
         new_user_id = request.session['_impersonate']
         if isinstance(new_user_id, User):
@@ -28,7 +28,7 @@ def apply_impersonate(request):
 
 def impersonator(request):
     # Trigger apply_impersonate
-    request.user.is_authenticated()
+    request.user.is_authenticated
 
     return request.impersonator
 
