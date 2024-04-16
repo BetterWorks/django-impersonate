@@ -1,3 +1,4 @@
+from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import empty, SimpleLazyObject
 from .helpers import User, check_allow_for_uri, check_allow_for_user
 
@@ -6,7 +7,7 @@ def apply_impersonate(request):
     request.user.is_impersonate = False
     request.impersonator = None
 
-    if request.user.is_authenticated() and \
+    if request.user.is_authenticated and \
        '_impersonate' in request.session:
         new_user_id = request.session['_impersonate']
         if isinstance(new_user_id, User):
@@ -27,12 +28,12 @@ def apply_impersonate(request):
 
 def impersonator(request):
     # Trigger apply_impersonate
-    request.user.is_authenticated()
+    request.user.is_authenticated
 
     return request.impersonator
 
 
-class ImpersonateMiddleware(object):
+class ImpersonateMiddleware(MiddlewareMixin):
     def process_request(self, request):
         # User isn't lazy, don't preserve laziness.
         if not isinstance(request.user, SimpleLazyObject):
