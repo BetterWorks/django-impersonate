@@ -97,7 +97,7 @@ def users_impersonable(request):
             settings.IMPERSONATE_CUSTOM_USER_QUERYSET
         )
         impersonator = get_impersonator(request)
-        return custom_queryset_func(impersonator)
+        return custom_queryset_func(impersonator, request)
     else:
         return User.objects.all()
 
@@ -145,7 +145,7 @@ def check_allow_impersonate(request):
         custom_allow_func = \
             import_func_from_string(settings.IMPERSONATE_CUSTOM_ALLOW)
 
-        return custom_allow_func(impersonator)
+        return custom_allow_func(impersonator, request)
     else:
         # default allow checking:
         if not impersonator.is_superuser:
